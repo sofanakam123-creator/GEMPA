@@ -1,0 +1,24 @@
+# Dataset asli BMKG berukuran besar
+BMKG_Earthquake_Catalog.csv
+
+# Kredensial & Secrets Streamlit
+.streamlit/secrets.toml
+
+# Aset mockup & template statis lama
+stitch_indonesian_seismic_hazard_dashboard/
+templates/
+static/
+
+# Python cache & virtualenv
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+.env
+
+# Model training intermediate/temp files
+.pytest_cache/
+.coverage
+htmlcov/
