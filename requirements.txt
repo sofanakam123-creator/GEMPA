@@ -5,6 +5,5 @@ scikit-learn
 pandas
 numpy
 joblib
-global-land-mask
 pymongo
 requests

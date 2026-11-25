@@ -9,13 +9,13 @@ import joblib
 import streamlit as st
 import folium
 from streamlit_folium import st_folium
-from global_land_mask import globe
+import requests
 
 # -------------------------------------------------------------
 # 1. KONFIGURASI HALAMAN STREAMLIT
 # -------------------------------------------------------------
 st.set_page_config(
-    page_title="GeoSeismik BMKG — Pemetaan & Klasifikasi AI",
+    page_title="GeoSeismik BMKG — Klasterisasi & Klasifikasi AI",
     page_icon="🌋",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -24,7 +24,6 @@ st.set_page_config(
 # Custom Styling CSS Modern
 st.markdown("""
 <style>
-    /* Google Fonts */
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
     
     html, body, [class*="css"] {
@@ -85,14 +84,12 @@ st.markdown("""
         100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
     }
     
-    /* Tombol Utama */
     div.stButton > button:first-child {
         border-radius: 10px;
         font-weight: 700;
         transition: all 0.2s ease;
     }
     
-    /* Tab Styling */
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
         background-color: #F1F5F9;
@@ -163,7 +160,7 @@ INDONESIA_CITIES = [
 # -------------------------------------------------------------
 MODEL_PATH = "model_gempa_bmkg.joblib"
 
-@st.cache_resource(show_spinner="Memuat model komputasi K-Means & Random Forest BMKG...")
+@st.cache_resource(show_spinner="Memuat model komputasi K-Means, DBSCAN & Random Forest BMKG...")
 def load_ml_model():
     if not os.path.exists(MODEL_PATH):
         st.error(f"File artefak `{MODEL_PATH}` tidak ditemukan! Jalankan skrip `train_model.py` terlebih dahulu.")
@@ -171,6 +168,77 @@ def load_ml_model():
     return joblib.load(MODEL_PATH)
 
 ml_data = load_ml_model()
+
+# Profil Tektonik 4 Klaster K-Means (Berdasarkan Hasil Riset geologis)
+CLUSTER_PROFILES = {
+    0: {
+        "nama": "Zona Dangkal Timur (Maluku–Papua)",
+        "kedalaman_rata": "33.6 km (Kerak Dangkal)",
+        "lempeng": "Sesar Geser Sorong, Busur Halmahera & Tunjaman Laut Maluku",
+        "karakter": "Aktivitas seismik tektonik konvergen kompleks antara lempeng Pasifik, Filipina, dan mikro-kontinen Halmahera."
+    },
+    1: {
+        "nama": "Zona Dangkal Tengah–Selatan (Jawa–Bali–Nusra–Sulawesi)",
+        "kedalaman_rata": "34.8 km (Kerak Dangkal)",
+        "lempeng": "Palung Busur Sunda, Busur Banda & Zona Sesar Palu-Koro",
+        "karakter": "Subduksi frontal lempeng Indo-Australia terhadap Eurasia dengan aktivitas gempa dangkal berkerapatan tinggi."
+    },
+    2: {
+        "nama": "Zona Dangkal Barat (Sumatra–Selat Sunda)",
+        "kedalaman_rata": "33.7 km (Kerak Dangkal)",
+        "lempeng": "Megathrust Sumatra & Zona Sesar Aktif Semangko (GSL)",
+        "karakter": "Penunjaman miring (oblique subduction) lempeng Samudra Hindia dengan akumulasi regangan tektonik intensif."
+    },
+    3: {
+        "nama": "Zona Subduksi Dalam (Laut Banda & Busur Dalam)",
+        "kedalaman_rata": "387.6 km (Hiposenter Dalam)",
+        "lempeng": "Zona Wadati-Benioff Subduksi Lempeng Tua Busur Banda",
+        "karakter": "Patahan lempeng samudera purba yang menunjam ke astenosfer mantel bumi hingga kedalaman ratusan kilometer."
+    }
+}
+
+# Koordinat sampel historis terstandarisasi untuk evaluasi DBSCAN
+@st.cache_data
+def get_historical_scaled():
+    samples = ml_data.get("historical_samples", [])
+    coords_arr = np.array([[s['Latitude'], s['Longitude'], s['Depth (km)']] for s in samples])
+    coords_scaled = ml_data['scaler_cluster'].transform(pd.DataFrame(coords_arr, columns=['Latitude', 'Longitude', 'Depth (km)']))
+    return coords_arr, coords_scaled
+
+HIST_COORDS, HIST_COORDS_SCALED = get_historical_scaled()
+
+def evaluate_dbscan_density(lat: float, lon: float, depth: float, eps: float = 0.40):
+    """Mengevaluasi kepadatan spasial titik koordinat terhadap konsentrasi spasial DBSCAN katalog BMKG."""
+    df_pt = pd.DataFrame([{'Latitude': lat, 'Longitude': lon, 'Depth (km)': depth}])
+    pt_scaled = ml_data['scaler_cluster'].transform(df_pt[['Latitude', 'Longitude', 'Depth (km)']])
+    dists = np.linalg.norm(HIST_COORDS_SCALED - pt_scaled, axis=1)
+    neighbors_count = int(np.sum(dists <= eps))
+    min_dist = float(np.min(dists))
+    
+    if neighbors_count >= 3 or min_dist <= 0.25:
+        return {
+            "status": "Zona Inti Padat Seismik (Core Cluster)",
+            "is_core": True,
+            "neighbors": neighbors_count,
+            "min_dist": round(min_dist, 3),
+            "bg": "#EFF6FF",
+            "border": "#BFDBFE",
+            "text": "#1E40AF",
+            "icon": "🎯",
+            "desc": f"Titik berada di dalam koridor sabuk seismik aktif berkepadatan kejadian tinggi ({neighbors_count} tetangga klaster historis)."
+        }
+    else:
+        return {
+            "status": "Titik Anomali / Jarang (Noise / Outlier)",
+            "is_core": False,
+            "neighbors": neighbors_count,
+            "min_dist": round(min_dist, 3),
+            "bg": "#FFFBEB",
+            "border": "#FDE68A",
+            "text": "#92400E",
+            "icon": "⚠️",
+            "desc": f"Titik berada di luar konsentrasi utama densitas gempa historis atau memiliki kedalaman anomali ({neighbors_count} tetangga spasial)."
+        }
 
 # -------------------------------------------------------------
 # 4. INTEGRASI MONGODB ATLAS (RIWAYAT SIMULASI)
@@ -183,7 +251,6 @@ def get_mongo_collection():
             return None
         import pymongo
         client = pymongo.MongoClient(mongo_uri, serverSelectionTimeoutMS=4000)
-        # Test ping ringan
         client.admin.command('ping')
         db = client["geoseismik_bmkg"]
         return db["riwayat_simulasi"]
@@ -191,7 +258,7 @@ def get_mongo_collection():
         return None
 
 def save_simulation(record):
-    """Menyimpan record ke MongoDB Atlas (jika ada) dan selalu simpan ke session state."""
+    """Menyimpan log simulasi ke MongoDB Atlas (jika ada) dan selalu simpan ke session state lokal."""
     if "local_simulations" not in st.session_state:
         st.session_state["local_simulations"] = []
     
@@ -222,7 +289,7 @@ def get_recent_history(limit=10):
     return st.session_state.get("local_simulations", [])[:limit], False
 
 # -------------------------------------------------------------
-# 5. FUNGSI GEOFISIKA, TSUNAMI & MMI
+# 5. FUNGSI JARAK & KOTA TERDEKAT
 # -------------------------------------------------------------
 def haversine_distance(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     R = 6371.0
@@ -242,79 +309,6 @@ def find_nearest_city(lat: float, lon: float):
             best_city = city
     return best_city["name"], round(min_dist, 1)
 
-def assess_tsunami(lat: float, lon: float, depth: float, predicted_category: str):
-    is_land = False
-    try:
-        is_land = bool(globe.is_land(lat, lon))
-    except Exception:
-        is_land = (-9.0 <= lat <= -6.0 and 105.0 <= lon <= 115.0)
-
-    if is_land:
-        return {
-            "status": "Tidak Berpotensi Tsunami",
-            "bg": "#ECFDF5",
-            "border": "#A7F3D0",
-            "text": "#065F46",
-            "icon": "🛡️",
-            "desc": "Episenter berada di daratan (bukan deformasi vertikal lantai samudra)."
-        }
-    
-    if depth <= 70.0:
-        if predicted_category == 'Kuat (>=6.0)':
-            return {
-                "status": "BERPOTENSI TSUNAMI",
-                "bg": "#FFF1F2",
-                "border": "#FECDD3",
-                "text": "#9F1239",
-                "icon": "🌊",
-                "desc": "Episenter dangkal di laut dengan magnitudo kuat (>= 6.0 SR). Waspadai kenaikan air laut!"
-            }
-        elif predicted_category == 'Sedang (5.0-5.9)':
-            return {
-                "status": "Waspada / Pemantauan Tsunami",
-                "bg": "#FFFBEB",
-                "border": "#FDE68A",
-                "text": "#92400E",
-                "icon": "⚠️",
-                "desc": "Episenter laut dangkal bermagnitudo sedang. Risiko tsunami lokal kecil, pantau sensor pasut."
-            }
-            
-    return {
-        "status": "Tidak Berpotensi Tsunami",
-        "bg": "#ECFDF5",
-        "border": "#A7F3D0",
-        "text": "#065F46",
-        "icon": "🛡️",
-        "desc": "Kedalaman hiposenter dalam (> 70 km) atau deformasi vertikal dasar laut tidak memicu tsunami."
-    }
-
-def estimate_mmi(lat: float, lon: float, depth: float, predicted_category: str):
-    city_name, dist_km = find_nearest_city(lat, lon)
-    R = math.sqrt(dist_km**2 + depth**2)
-    
-    mag_approx = {
-        'Mikro (<3.0)': 2.5,
-        'Minor (3.0-3.9)': 3.5,
-        'Ringan (4.0-4.9)': 4.5,
-        'Sedang (5.0-5.9)': 5.5,
-        'Kuat (>=6.0)': 6.5
-    }.get(predicted_category, 4.0)
-    
-    # Atenuasi Empiris Gutenberg-Richter / Esteva Modifikasi
-    intensity = 1.5 * mag_approx - 3.5 * math.log10(max(R, 10.0)) + 3.0
-    intensity = max(1.0, min(10.0, intensity))
-    
-    if intensity < 2.5:
-        return "MMI I–II", f"Getaran tidak terasa atau sangat lemah di {city_name} ({dist_km} km).", "#EFF6FF", "#BFDBFE", "#1E40AF"
-    elif intensity < 4.5:
-        return "MMI III–IV", f"Dirasakan nyata di dalam rumah, jendela bergetar di sekitar {city_name} ({dist_km} km).", "#ECFDF5", "#A7F3D0", "#065F46"
-    elif intensity < 6.5:
-        return "MMI V–VI", f"Getaran dirasakan luas, gerabah pecah, potensi retak plester dinding di {city_name} ({dist_km} km).", "#FFFBEB", "#FDE68A", "#92400E"
-    elif intensity < 8.0:
-        return "MMI VII–VIII", f"Kerusakan sedang pada bangunan kokoh, dinding roboh dekat {city_name} ({dist_km} km).", "#FFF7ED", "#FED7AA", "#9A3412"
-    else:
-        return "MMI IX+", f"Kerusakan masif pada konstruksi, rekahan tanah di zona episenter dekat {city_name} ({dist_km} km).", "#FFF1F2", "#FECDD3", "#9F1239"
-
 # -------------------------------------------------------------
 # 6. HEADER APLIKASI
 # -------------------------------------------------------------
@@ -325,16 +319,16 @@ st.markdown("""
             <div style="display: flex; align-items: center; gap: 10px;">
                 <span style="font-size: 28px;">🌋</span>
                 <h1 style="margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.5px;">GeoSeismik BMKG</h1>
-                <span style="background: #3B82F6; color: white; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700;">PRODUKSI</span>
+                <span style="background: #3B82F6; color: white; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700;">RISET SPASIAL</span>
             </div>
             <p style="margin: 6px 0 0 0; color: #94A3B8; font-size: 13px;">
-                Sistem Pemetaan Zona Seismik & Klasifikasi Kategori Magnitudo Gempa Indonesia (Katalog BMKG 1998–2024 | 217.807 Kejadian)
+                Klasterisasi Zona Seismik & Klasifikasi Kategori Magnitudo Gempa Indonesia (Katalog BMKG 1998–2024 | 217.807 Kejadian)
             </p>
         </div>
         <div style="display: flex; gap: 10px; align-items: center;">
             <div class="status-badge">
                 <span class="pulse-dot"></span>
-                <span>K-Means (k=4) + Random Forest</span>
+                <span>K-Means (k=4) • DBSCAN • Random Forest</span>
             </div>
         </div>
     </div>
@@ -429,7 +423,6 @@ with tab_simulasi:
             btn_search = st.button("🔍 Cari Lokasi", use_container_width=True)
 
         if btn_search and search_query.strip():
-            import requests
             try:
                 headers = {"User-Agent": "GeoSeismikBMKG/1.0"}
                 query_clean = search_query.strip()
@@ -447,7 +440,7 @@ with tab_simulasi:
             except Exception as e:
                 st.warning(f"⚠️ Gagal mencari lokasi (periksa koneksi internet): {e}")
 
-        # Input Koordinat
+        # Input Koordinat Terikat Key
         c_lat, c_lon = st.columns(2)
         with c_lat:
             val_lat = st.number_input(
@@ -471,7 +464,7 @@ with tab_simulasi:
                 help="Wilayah Indonesia: 90.0° s.d. 145.0°"
             )
 
-        # Slider Kedalaman
+        # Slider Kedalaman Terikat Key
         val_depth = st.slider(
             "Kedalaman / Depth (km)",
             min_value=1.0,
@@ -482,13 +475,13 @@ with tab_simulasi:
         
         # Badge Keterangan Kedalaman
         if val_depth <= 30:
-            depth_cat = "🟢 Kerak Sangat Dangkal (≤ 30 km) — Potensi Kerusakan Bangunan Tertinggi"
+            depth_cat = "🟢 Kerak Sangat Dangkal (≤ 30 km) — Konsentrasi Deformasi Kerak Atas"
         elif val_depth <= 70:
-            depth_cat = "🟡 Kerak Dangkal (30–70 km) — Batas Ambang Pemicu Tsunami Laut"
+            depth_cat = "🟡 Kerak Dangkal (30–70 km) — Transisi Patahan Lempeng Kontak Antar Muka"
         elif val_depth <= 300:
-            depth_cat = "🟠 Menengah / Intermediate (70–300 km)"
+            depth_cat = "🟠 Menengah / Intermediate (70–300 km) — Penunjaman Subduksi Aktif"
         else:
-            depth_cat = "🔵 Zona Subduksi Dalam (> 300 km) — Laut Banda & Busur Dalam"
+            depth_cat = "🔵 Zona Subduksi Dalam (> 300 km) — Mantel Bumi / Wadati-Benioff Zone"
         st.caption(depth_cat)
 
         # Expander Parameter Teknis BMKG (Opsional)
@@ -509,10 +502,8 @@ with tab_simulasi:
         if not is_valid_indo:
             st.error("⚠️ Koordinat di luar batas wilayah pemantauan BMKG Indonesia (-15.5° s.d. 8.5° Lintang, 90.0° s.d. 145.0° Bujur). Silakan sesuaikan.")
 
-        # Peta Folium Interaktif (OpenStreetMap + 2 Radius Lingkaran MMI)
-        st.markdown("**Peta Episenter & Radius Estimasi Guncangan (MMI):**")
-        
-        pred_cat_for_map = st.session_state.get("prediction_result", {}).get("category", "Sedang (5.0-5.9)") if st.session_state.get("prediction_result") else "Sedang (5.0-5.9)"
+        # Peta Folium Interaktif (OpenStreetMap + 2 Radius Spasial Episenter: 50 km & 150 km)
+        st.markdown("**Peta Episenter & Radius Referensi Spasial (50 km & 150 km):**")
         
         m = folium.Map(
             location=[val_lat, val_lon],
@@ -521,40 +512,35 @@ with tab_simulasi:
             attr="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
         )
         
-        # Radius 1: Estimasi getaran kuat (MMI V+)
-        mag_proxy = {'Mikro (<3.0)': 2.5, 'Minor (3.0-3.9)': 3.5, 'Ringan (4.0-4.9)': 4.5, 'Sedang (5.0-5.9)': 5.5, 'Kuat (>=6.0)': 6.5}.get(pred_cat_for_map, 4.0)
-        radius_strong = max(15000, int((mag_proxy * 9.0 + val_depth * 0.4) * 1000))
-        radius_felt = max(45000, int((mag_proxy * 26.0 + val_depth * 1.1) * 1000))
-        
-        # Lingkaran Luar (Getaran Dirasakan Luas / Kuning)
+        # Radius 1: Jarak Spasial Dekat (50 km)
         folium.Circle(
             location=[val_lat, val_lon],
-            radius=radius_felt,
-            color="#D97706",
-            weight=1.5,
+            radius=50000,
+            color="#3B82F6",
+            weight=1.8,
             fill=True,
-            fill_color="#FDE68A",
-            fill_opacity=0.25,
-            tooltip=f"Radius Getaran Dirasakan: ±{radius_felt//1000} km (MMI II–IV)"
+            fill_color="#93C5FD",
+            fill_opacity=0.18,
+            tooltip="Radius Spasial 50 km dari Episenter"
         ).add_to(m)
         
-        # Lingkaran Dalam (Getaran Signifikan / Merah)
+        # Radius 2: Jarak Spasial Menengah (150 km)
         folium.Circle(
             location=[val_lat, val_lon],
-            radius=radius_strong,
-            color="#DC2626",
-            weight=2,
+            radius=150000,
+            color="#64748B",
+            weight=1.5,
             fill=True,
-            fill_color="#F87171",
-            fill_opacity=0.35,
-            tooltip=f"Radius Getaran Signifikan: ±{radius_strong//1000} km (MMI V+)"
+            fill_color="#CBD5E1",
+            fill_opacity=0.12,
+            tooltip="Radius Spasial 150 km dari Episenter"
         ).add_to(m)
         
         # Marker Episenter
         folium.Marker(
             location=[val_lat, val_lon],
-            popup=f"<b>Episenter Gempa</b><br>Lat: {val_lat:.3f}°<br>Lon: {val_lon:.3f}°<br>Kedalaman: {val_depth} km",
-            tooltip="Titik Episenter",
+            popup=f"<b>Episenter Gempa Uji</b><br>Lat: {val_lat:.3f}°<br>Lon: {val_lon:.3f}°<br>Kedalaman: {val_depth} km",
+            tooltip="Titik Episenter Uji",
             icon=folium.Icon(color="red", icon="crosshairs", prefix="fa")
         ).add_to(m)
         
@@ -572,7 +558,7 @@ with tab_simulasi:
     should_run = btn_analyze or st.session_state.get("run_auto", False)
     if should_run and is_valid_indo:
         st.session_state["run_auto"] = False
-        with st.spinner("Menghitung klaster zona K-Means & klasifikasi Random Forest..."):
+        with st.spinner("Menghitung klaster zona K-Means, evaluasi densitas DBSCAN & klasifikasi Random Forest..."):
             # 1. Klaster Spasial K-Means (k=4)
             df_in = pd.DataFrame([{
                 'Latitude': val_lat,
@@ -590,7 +576,10 @@ with tab_simulasi:
             cname = ml_data['cluster_mapping'].get(cid, f"Klaster {cid}")
             df_in['Cluster_KMeans'] = cid
             
-            # 2. Random Forest
+            # 2. Evaluasi Kepadatan Spasial DBSCAN
+            dbscan_info = evaluate_dbscan_density(val_lat, val_lon, val_depth, eps=0.40)
+            
+            # 3. Klasifikasi Random Forest
             feats = ml_data['num_cols'] + ml_data['cat_cols']
             pred_class = str(ml_data['rf_pipeline'].predict(df_in[feats])[0])
             probas = ml_data['rf_pipeline'].predict_proba(df_in[feats])[0]
@@ -598,12 +587,7 @@ with tab_simulasi:
             classes = list(ml_data['rf_pipeline'].classes_)
             proba_dict = {cls: round(float(p) * 100.0, 1) for cls, p in zip(classes, probas)}
             
-            # 3. Tsunami & MMI
-            tsunami_res = assess_tsunami(val_lat, val_lon, val_depth, pred_class)
-            mmi_scale, mmi_desc, mmi_bg, mmi_border, mmi_text = estimate_mmi(val_lat, val_lon, val_depth, pred_class)
             city_near, dist_near = find_nearest_city(val_lat, val_lon)
-            
-            # Waktu WIB
             wib_now = datetime.now(timezone(timedelta(hours=7))).strftime("%Y-%m-%d %H:%M:%S WIB")
             
             # Simpan hasil ke session state
@@ -612,16 +596,12 @@ with tab_simulasi:
                 "lat": val_lat,
                 "lon": val_lon,
                 "depth": val_depth,
+                "cluster_id": cid,
                 "cluster_name": cname,
+                "dbscan": dbscan_info,
                 "category": pred_class,
                 "confidence": proba_dict.get(pred_class, 0.0),
                 "probabilities": proba_dict,
-                "tsunami": tsunami_res,
-                "mmi_scale": mmi_scale,
-                "mmi_desc": mmi_desc,
-                "mmi_bg": mmi_bg,
-                "mmi_border": mmi_border,
-                "mmi_text": mmi_text,
                 "nearest_city": city_near,
                 "distance_km": dist_near
             }
@@ -633,17 +613,16 @@ with tab_simulasi:
                 "latitude": val_lat,
                 "longitude": val_lon,
                 "depth_km": val_depth,
-                "cluster_name": cname,
+                "zona_kmeans": cname,
+                "status_dbscan": dbscan_info["status"],
                 "kategori_prediksi": pred_class,
                 "confidence_pct": proba_dict.get(pred_class, 0.0),
-                "potensi_tsunami": tsunami_res["status"],
-                "skala_mmi": mmi_scale,
                 "kota_terdekat": f"{city_near} ({dist_near} km)"
             })
 
-    # ------------------ KOLOM KANAN (HASIL OUTPUT) ------------------
+    # ------------------ KOLOM KANAN (HASIL OUTPUT RISET) ------------------
     with col_right:
-        st.markdown("### 📊 Hasil Analisis AI & Dampak Seismik")
+        st.markdown("### 📊 Hasil Analisis Model Riset Seismik")
         
         res = st.session_state.get("prediction_result")
         
@@ -656,11 +635,11 @@ with tab_simulasi:
                 <p style="color: #64748B; font-size: 14px; max-width: 380px; margin: 0 auto 20px auto; line-height: 1.5;">
                     Silakan tentukan parameter koordinat di kolom kiri atau tekan tombol <b>"🎲 Acak Data Historis"</b>, lalu tekan <b>"Analisis Zona & Klasifikasi"</b>.
                 </p>
-                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 12px 18px; text-align: left; max-width: 420px; font-size: 12px; color: #475569;">
-                    <b>Pipeline Siap:</b><br>
-                    • Klasterisasi Tektonik 4 Zona K-Means<br>
-                    • Klasifikasi Probabilistik 5 Kategori Random Forest<br>
-                    • Analisis Potensi Bahaya Tsunami & Intensitas MMI
+                <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: 14px 18px; text-align: left; max-width: 440px; font-size: 12px; color: #475569;">
+                    <b>Pipeline Evaluasi Riset:</b><br>
+                    • <b>K-Means (k=4):</b> Segmentasi 4 Klaster Zona Seismik Tektonik Indonesia<br>
+                    • <b>DBSCAN:</b> Evaluasi Kepadatan Spasial (Core Cluster vs Outlier Spasial)<br>
+                    • <b>Random Forest:</b> Klasifikasi 5 Kategori Magnitudo (Mikro s.d. Kuat)
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -698,7 +677,7 @@ with tab_simulasi:
             <div style="background: {c_style['bg']}; border: 1.5px solid {c_style['border']}; border-radius: 14px; padding: 20px; margin: 12px 0 16px 0;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                     <span style="background: {c_style['badge']}; color: white; padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; text-transform: uppercase;">
-                        Prediksi Utama AI
+                        Prediksi Kategori Random Forest
                     </span>
                     <span style="font-size: 24px; font-weight: 800; color: {c_style['text']};">
                         {res['confidence']}%
@@ -708,34 +687,44 @@ with tab_simulasi:
                     {res['category']}
                 </div>
                 <p style="margin: 6px 0 0 0; font-size: 12px; color: {c_style['text']}; opacity: 0.9;">
-                    Episenter dekat <b>{res['nearest_city']}</b> ({res['distance_km']} km) • Kedalaman {res['depth']} km
+                    Titik episenter dekat <b>{res['nearest_city']}</b> ({res['distance_km']} km) • Kedalaman hiposenter {res['depth']} km
                 </p>
             </div>
             """, unsafe_allow_html=True)
 
-            # 3. Kartu Dampak Mitigasi: Tsunami & MMI
-            c_tsu, c_mmi = st.columns(2)
-            with c_tsu:
-                t = res['tsunami']
+            # 3. Dua Kartu Analisis Model Riset (K-Means & DBSCAN)
+            c_km, c_db = st.columns(2)
+            prof = CLUSTER_PROFILES.get(res['cluster_id'], CLUSTER_PROFILES[1])
+            
+            with c_km:
                 st.markdown(f"""
-                <div class="impact-card" style="background: {t['bg']}; border-color: {t['border']}; min-height: 110px;">
-                    <div style="font-size: 13px; font-weight: 800; color: {t['text']}; margin-bottom: 4px;">
-                        {t['icon']} {t['status']}
+                <div class="impact-card" style="background: #F8FAFC; border: 1.5px solid #E2E8F0; min-height: 125px;">
+                    <div style="font-size: 12px; font-weight: 800; color: #0F172A; margin-bottom: 4px;">
+                        📌 Segmentasi K-Means (k=4)
                     </div>
-                    <div style="font-size: 11px; color: {t['text']}; line-height: 1.4;">
-                        {t['desc']}
+                    <div style="font-size: 11px; color: #334155; margin-bottom: 3px;">
+                        <b>Zona:</b> {prof['nama']}<br>
+                        <b>Rerata Kedalaman:</b> {prof['kedalaman_rata']}
+                    </div>
+                    <div style="font-size: 11px; color: #64748B; line-height: 1.4;">
+                        <b>Karakter Tektonik:</b> {prof['karakter']}
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
             
-            with c_mmi:
+            with c_db:
+                db = res['dbscan']
                 st.markdown(f"""
-                <div class="impact-card" style="background: {res['mmi_bg']}; border-color: {res['mmi_border']}; min-height: 110px;">
-                    <div style="font-size: 13px; font-weight: 800; color: {res['mmi_text']}; margin-bottom: 4px;">
-                        📳 Skala {res['mmi_scale']}
+                <div class="impact-card" style="background: {db['bg']}; border: 1.5px solid {db['border']}; min-height: 125px;">
+                    <div style="font-size: 12px; font-weight: 800; color: {db['text']}; margin-bottom: 4px;">
+                        {db['icon']} Densitas Spasial DBSCAN
                     </div>
-                    <div style="font-size: 11px; color: {res['mmi_text']}; line-height: 1.4;">
-                        {res['mmi_desc']}
+                    <div style="font-size: 11px; color: {db['text']}; margin-bottom: 3px;">
+                        <b>Status:</b> {db['status']}<br>
+                        <b>Kepadatan:</b> {db['neighbors']} tetangga (jarak terdekat: {db['min_dist']})
+                    </div>
+                    <div style="font-size: 11px; color: {db['text']}; line-height: 1.4; opacity: 0.95;">
+                        {db['desc']}
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
@@ -770,16 +759,16 @@ with tab_simulasi:
             
     if recent_records:
         df_hist = pd.DataFrame(recent_records)
-        cols_display = [c for c in ["waktu_wib", "latitude", "longitude", "depth_km", "cluster_name", "kategori_prediksi", "potensi_tsunami", "skala_mmi", "kota_terdekat"] if c in df_hist.columns]
+        cols_display = [c for c in ["waktu_wib", "latitude", "longitude", "depth_km", "zona_kmeans", "status_dbscan", "kategori_prediksi", "confidence_pct", "kota_terdekat"] if c in df_hist.columns]
         df_show = df_hist[cols_display].rename(columns={
             "waktu_wib": "Waktu (WIB)",
             "latitude": "Lintang",
             "longitude": "Bujur",
             "depth_km": "Kedalaman (km)",
-            "cluster_name": "Zona Klaster",
+            "zona_kmeans": "Zona Klaster K-Means",
+            "status_dbscan": "Kepadatan Spasial DBSCAN",
             "kategori_prediksi": "Prediksi Magnitudo",
-            "potensi_tsunami": "Potensi Tsunami",
-            "skala_mmi": "Skala MMI",
+            "confidence_pct": "Keyakinan AI (%)",
             "kota_terdekat": "Kota Terdekat"
         })
         st.dataframe(df_show, use_container_width=True, hide_index=True)
@@ -791,9 +780,8 @@ with tab_simulasi:
 # =============================================================
 with tab_batch:
     st.markdown("### 📂 Analisis Gempa Massal (Batch CSV)")
-    st.write("Unggah berkas CSV katalog gempa bumi untuk klasifikasi zona seismik, kategori magnitudo, potensi tsunami, dan skala getaran serentak.")
+    st.write("Unggah berkas CSV katalog gempa bumi untuk klasifikasi zona seismik K-Means, evaluasi kepadatan spasial DBSCAN, dan prediksi kategori magnitudo Random Forest secara serentak.")
     
-    # Download template button
     if os.path.exists("template_gempa_bmkg.csv"):
         with open("template_gempa_bmkg.csv", "rb") as fp:
             st.download_button(
@@ -810,7 +798,6 @@ with tab_batch:
             df_batch = pd.read_csv(uploaded_file)
             st.success(f"Berkas berhasil dimuat: **{len(df_batch)} baris data**.")
             
-            # Pra-pemrosesan kolom wajib
             for art in ['Unnamed: 2', 'No']:
                 if art in df_batch.columns: df_batch = df_batch.drop(columns=[art])
                 
@@ -838,7 +825,7 @@ with tab_batch:
                     coords = ml_data['scaler_cluster'].transform(df_batch[['Latitude', 'Longitude', 'Depth (km)']])
                     cids = ml_data['kmeans'].predict(coords)
                     df_batch['Cluster_KMeans'] = cids
-                    df_batch['Zona_Seismik'] = [ml_data['cluster_mapping'].get(cid, f"Klaster {cid}") for cid in cids]
+                    df_batch['Zona_KMeans'] = [ml_data['cluster_mapping'].get(cid, f"Klaster {cid}") for cid in cids]
                     
                     # 2. Random Forest
                     feats = ml_data['num_cols'] + ml_data['cat_cols']
@@ -847,24 +834,24 @@ with tab_batch:
                     df_batch['Prediksi_Kategori'] = preds
                     df_batch['Keyakinan_AI (%)'] = np.round(np.max(probas, axis=1) * 100.0, 1)
                     
-                    # 3. Tsunami & MMI
-                    tsu_list, mmi_list = [], []
+                    # 3. DBSCAN & Kota Terdekat
+                    db_list, city_list = [], []
                     for _, r in df_batch.iterrows():
-                        t_info = assess_tsunami(float(r['Latitude']), float(r['Longitude']), float(r['Depth (km)']), str(r['Prediksi_Kategori']))
-                        m_scale, _, _, _, _ = estimate_mmi(float(r['Latitude']), float(r['Longitude']), float(r['Depth (km)']), str(r['Prediksi_Kategori']))
-                        tsu_list.append(t_info['status'])
-                        mmi_list.append(m_scale)
+                        db_res = evaluate_dbscan_density(float(r['Latitude']), float(r['Longitude']), float(r['Depth (km)']))
+                        c_near, d_near = find_nearest_city(float(r['Latitude']), float(r['Longitude']))
+                        db_list.append(db_res['status'])
+                        city_list.append(f"{c_near} ({d_near} km)")
                         
-                    df_batch['Status_Tsunami'] = tsu_list
-                    df_batch['Skala_MMI'] = mmi_list
+                    df_batch['Kepadatan_DBSCAN'] = db_list
+                    df_batch['Kota_Terdekat'] = city_list
                     
                 # Ringkasan KPI
                 kpi1, kpi2, kpi3, kpi4 = st.columns(4)
                 kpi1.metric("Total Kejadian Gempa", f"{len(df_batch):,}")
-                kpi2.metric("Zona Terbanyak", df_batch['Zona_Seismik'].value_counts().index[0] if len(df_batch)>0 else "-")
+                kpi2.metric("Zona K-Means Terbanyak", df_batch['Zona_KMeans'].value_counts().index[0] if len(df_batch)>0 else "-")
                 kpi3.metric("Kategori Dominan", df_batch['Prediksi_Kategori'].value_counts().index[0] if len(df_batch)>0 else "-")
-                critical_count = df_batch['Prediksi_Kategori'].isin(['Sedang (5.0-5.9)', 'Kuat (>=6.0)']).sum()
-                kpi4.metric("Potensi Bahaya (Sedang/Kuat)", f"{critical_count:,}")
+                n_core = df_batch['Kepadatan_DBSCAN'].str.contains("Core").sum()
+                kpi4.metric("Kejadian Zona Inti (Core)", f"{n_core:,}", f"{(n_core/len(df_batch)*100.0):.1f}%")
                 
                 # Peta Sebaran Spasial Gempa
                 st.markdown("**Peta Sebaran Spasial Gempa Hasil Batch:**")
@@ -872,9 +859,10 @@ with tab_batch:
                 
                 # Tabel Data & Ekspor CSV
                 st.markdown("**Tabel Rincian Hasil Klasifikasi:**")
-                st.dataframe(df_batch[['Latitude', 'Longitude', 'Depth (km)', 'Zona_Seismik', 'Prediksi_Kategori', 'Keyakinan_AI (%)', 'Status_Tsunami', 'Skala_MMI']], use_container_width=True)
+                cols_export = ['Latitude', 'Longitude', 'Depth (km)', 'Zona_KMeans', 'Kepadatan_DBSCAN', 'Prediksi_Kategori', 'Keyakinan_AI (%)', 'Kota_Terdekat']
+                st.dataframe(df_batch[cols_export], use_container_width=True)
                 
-                csv_export = df_batch.to_csv(index=False).encode('utf-8')
+                csv_export = df_batch[cols_export].to_csv(index=False).encode('utf-8')
                 st.download_button(
                     "📥 Unduh Seluruh Hasil Klasifikasi (.CSV)",
                     data=csv_export,
@@ -905,7 +893,6 @@ with tab_performa:
     comp_data = ml_data.get("eval_model_comparison", [])
     if comp_data:
         df_comp = pd.DataFrame(comp_data)
-        # Format persentase
         for col in ['Accuracy', 'Macro F1-Score', 'Weighted F1-Score', 'Rata-rata CV (Macro F1)']:
             if col in df_comp.columns:
                 df_comp[col] = df_comp[col].apply(lambda x: f"{float(x)*100.0:.2f}%" if pd.notnull(x) else "-")
@@ -956,9 +943,9 @@ with tab_panduan:
     with step1:
         st.markdown("""
         <div class="card-box">
-            <h4 style="margin: 0 0 6px 0; color: #0F172A;">1️⃣ Input Parameter</h4>
+            <h4 style="margin: 0 0 6px 0; color: #0F172A;">1️⃣ Input Parameter Spasial</h4>
             <p style="font-size: 12px; color: #64748B; margin: 0; line-height: 1.5;">
-                Pilih wilayah kota referensi, geser peta, atau klik <b>"🎲 Acak Data Historis"</b> untuk menguji kejadian nyata BMKG dari 500 sampel terstratifikasi.
+                Tentukan koordinat lintang, bujur, dan kedalaman hiposenter menggunakan tombol <b>"🎲 Acak Data Historis"</b>, preset kota, atau pencarian nama wilayah.
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -966,9 +953,9 @@ with tab_panduan:
     with step2:
         st.markdown("""
         <div class="card-box">
-            <h4 style="margin: 0 0 6px 0; color: #0F172A;">2️⃣ Inferensi Ensembel AI</h4>
+            <h4 style="margin: 0 0 6px 0; color: #0F172A;">2️⃣ Klasterisasi (K-Means & DBSCAN)</h4>
             <p style="font-size: 12px; color: #64748B; margin: 0; line-height: 1.5;">
-                K-Means memetakan koordinat ke salah satu dari 4 zona tektonik Indonesia. Random Forest mengklasifikasikan spektrum magnitudo (Mikro s.d. Kuat).
+                Model K-Means (k=4) memetakan titik ke dalam salah satu dari 4 zona tektonik Indonesia, sedangkan DBSCAN mengevaluasi kerapatan densitas spasial (zona inti vs outlier).
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -976,9 +963,9 @@ with tab_panduan:
     with step3:
         st.markdown("""
         <div class="card-box">
-            <h4 style="margin: 0 0 6px 0; color: #0F172A;">3️⃣ Analisis Dampak Bencana</h4>
+            <h4 style="margin: 0 0 6px 0; color: #0F172A;">3️⃣ Klasifikasi Random Forest</h4>
             <p style="font-size: 12px; color: #64748B; margin: 0; line-height: 1.5;">
-                Sistem mengevaluasi potensi tsunami (berbasis letak darat/laut & kedalaman) dan mengestimasi radius getaran gempa bumi (Skala MMI) ke kota terdekat.
+                Pipeline Random Forest Classifier memprediksi kategori spektrum kekuatan magnitudo (Mikro &lt;3.0 s.d. Kuat &ge;6.0) beserta persentase distribusi probabilitas kelasnya.
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -1003,12 +990,12 @@ with tab_panduan:
 
     st.markdown("---")
     
-    # Etika Kebencanaan
+    # Etika Kebencanaan & Ruang Lingkup Riset
     st.warning("""
     **⚖️ Etika Kebencanaan & Batasan Ilmiah Pemodelan:**
-    1. **Bukan Alat Peramal Waktu Gempa:** Sampai saat ini, belum ada teknologi di dunia yang dapat memprediksi secara pasti hari dan jam terjadinya gempa di masa depan. Sistem ini bertugas mengklasifikasi spektrum magnitudo berdasarkan karakteristik spasial dan kedalaman tektonik.
-    2. **Anti Data Leakage:** Nilai numerik `Magnitude` murni menjadi variabel target evaluasi dan tidak pernah dilibatkan sebagai fitur prediktor ($X$).
-    3. **Tujuan Sains & Edukasi:** Aplikasi ini dirancang sebagai platform visualisasi komputasi geofisika, edukasi mitigasi kebencanaan nasional, dan portofolio data science terapan.
+    1. **Ruang Lingkup Murni Riset Machine Learning:** Aplikasi ini murni memfokuskan pada pemodelan klasterisasi spasial (K-Means & DBSCAN) dan klasifikasi probabilitas spektrum magnitudo (Random Forest) berdasarkan data tabular spasial katalog BMKG. Sistem ini tidak bertindak sebagai sistem peringatan dini tsunami realtime.
+    2. **Bukan Alat Peramal Waktu Gempa:** Model tidak meramalkan waktu terjadinya gempa di masa depan, melainkan mengklasifikasikan kategori magnitudo dari parameter hiposenter yang diberikan.
+    3. **Anti Data Leakage:** Nilai numerik `Magnitude` murni menjadi variabel target evaluasi dan tidak pernah dilibatkan sebagai fitur prediktor ($X$).
     """)
 
 # -------------------------------------------------------------
@@ -1016,7 +1003,7 @@ with tab_panduan:
 # -------------------------------------------------------------
 st.markdown("""
 <div style="text-align: center; color: #94A3B8; font-size: 12px; margin-top: 36px; padding: 20px 0; border-top: 1px solid #E2E8F0;">
-    GeoSeismik BMKG © 2024–2026 • Sistem Pemetaan Seismik & Klasifikasi AI BMKG<br>
-    Didukung oleh <b>Python, Streamlit, Scikit-Learn, Folium, Global-Land-Mask & MongoDB Atlas</b>
+    GeoSeismik BMKG © 2024–2026 • Klasterisasi Zona Seismik & Klasifikasi AI BMKG<br>
+    Didukung oleh <b>Python, Streamlit, Scikit-Learn, Folium & MongoDB Atlas</b>
 </div>
 """, unsafe_allow_html=True)
