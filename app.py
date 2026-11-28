@@ -562,7 +562,13 @@ tab_simulasi, tab_batch, tab_performa, tab_panduan = st.tabs([
 # TAB 1: SIMULASI & PETA (50:50 SYMMETRICAL LAYOUT)
 # =============================================================
 with tab_simulasi:
-    # Inisialisasi Session State
+    # 1. Pindahkan pending_lat & pending_lon dari handler klik peta SEBELUM widget apa pun dibuat
+    if "pending_lat" in st.session_state:
+        st.session_state["input_lat"] = float(st.session_state.pop("pending_lat"))
+    if "pending_lon" in st.session_state:
+        st.session_state["input_lon"] = float(st.session_state.pop("pending_lon"))
+
+    # Inisialisasi Session State bawaan
     if "input_lat" not in st.session_state: st.session_state["input_lat"] = -7.50
     if "input_lon" not in st.session_state: st.session_state["input_lon"] = 110.40
     if "input_depth" not in st.session_state: st.session_state["input_depth"] = 15.0
@@ -571,6 +577,7 @@ with tab_simulasi:
     if "hour" not in st.session_state: st.session_state["hour"] = 12
     if "historical_actual" not in st.session_state: st.session_state["historical_actual"] = None
     if "prediction_result" not in st.session_state: st.session_state["prediction_result"] = None
+    if "map_scroll_zoom" not in st.session_state: st.session_state["map_scroll_zoom"] = False
 
     col_left, col_right = st.columns([1, 1], gap="large")
 
@@ -642,12 +649,32 @@ with tab_simulasi:
                         st.session_state["historical_actual"] = None
                         break
 
-        typeahead_query = st.text_input(
-            "🔍 Cari Kota (Awalan Huruf Typeahead)",
-            placeholder="Ketik awalan huruf kota (misal: S, SO, SA, SU, BA, ME, PA, JA)...",
-            key="typeahead_prefix_input",
-            help="Ketik awalan huruf (prefix) untuk menyaring daftar kota secara realtime."
-        )
+        def clear_typeahead_search():
+            st.session_state["typeahead_prefix_input"] = ""
+            if "typeahead_select_box" in st.session_state:
+                st.session_state["typeahead_select_box"] = ""
+
+        # Layout input pencarian typeahead dengan tombol bersihkan (✕)
+        current_typeahead_val = st.session_state.get("typeahead_prefix_input", "").strip()
+        if current_typeahead_val:
+            col_search_input, col_clear_btn = st.columns([5.2, 0.8])
+            with col_search_input:
+                typeahead_query = st.text_input(
+                    "🔍 Cari Kota (Awalan Huruf Typeahead)",
+                    placeholder="Ketik awalan huruf kota (misal: S, SO, SA, SU, BA, ME, PA, JA)...",
+                    key="typeahead_prefix_input",
+                    help="Ketik awalan huruf (prefix) untuk menyaring daftar kota secara realtime."
+                )
+            with col_clear_btn:
+                st.markdown("<div style='height: 28px;'></div>", unsafe_allow_html=True)
+                st.button("✕", on_click=clear_typeahead_search, use_container_width=True, help="Bersihkan teks & tutup daftar rekomendasi kota")
+        else:
+            typeahead_query = st.text_input(
+                "🔍 Cari Kota (Awalan Huruf Typeahead)",
+                placeholder="Ketik awalan huruf kota (misal: S, SO, SA, SU, BA, ME, PA, JA)...",
+                key="typeahead_prefix_input",
+                help="Ketik awalan huruf (prefix) untuk menyaring daftar kota secara realtime."
+            )
 
         if typeahead_query and typeahead_query.strip():
             q_clean = typeahead_query.strip().lower()
@@ -668,7 +695,7 @@ with tab_simulasi:
                 ])
                 st.markdown(
                     f"""
-                    <div style="margin-top: 4px; margin-bottom: 4px;">
+                    <div style="margin-top: 4px; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center;">
                         <span style="font-size: 11px; font-weight: 700; color: #475569;">
                             📋 {len(all_matches)} Kota Ditemukan untuk Awalan "{typeahead_query.strip().upper()}" (Gulir/Scroll untuk melihat semua):
                         </span>
@@ -716,8 +743,8 @@ with tab_simulasi:
                     resp = requests.get(url, headers=headers, timeout=5)
                     if resp.status_code == 200 and len(resp.json()) > 0:
                         geo = resp.json()[0]
-                        st.session_state["input_lat"] = round(float(geo["lat"]), 3)
-                        st.session_state["input_lon"] = round(float(geo["lon"]), 3)
+                        st.session_state["pending_lat"] = round(float(geo["lat"]), 3)
+                        st.session_state["pending_lon"] = round(float(geo["lon"]), 3)
                         st.session_state["historical_actual"] = None
                         st.success(f"📍 Ditemukan: {geo.get('display_name', query_clean)}")
                         st.rerun()
@@ -749,6 +776,24 @@ with tab_simulasi:
                 key="input_lon",
                 help="Wilayah Indonesia: 94.0° s.d. 142.0°"
             )
+
+        # -------------------------------------------------------------
+        # FITUR: 🎲 ACAK DATA GEMPA (KEDALAMAN & WAKTU TANPA UBAH LOKASI)
+        # -------------------------------------------------------------
+        def randomize_earthquake_parameters():
+            st.session_state["input_depth"] = round(random.uniform(5.0, 300.0), 1)
+            st.session_state["year"] = random.randint(1998, 2026)
+            st.session_state["month"] = random.randint(1, 12)
+            st.session_state["hour"] = random.randint(0, 23)
+            st.session_state["historical_actual"] = None
+            # Tidak mengubah input_lat / input_lon, dan tidak langsung menjalankan analisis
+
+        st.button(
+            "🎲 Acak Data Gempa (Kedalaman & Waktu)",
+            on_click=randomize_earthquake_parameters,
+            use_container_width=True,
+            help="Acak parameter fisis kedalaman gempa (5.0–300.0 km) serta waktu kejadian (tahun, bulan, jam UTC) tanpa mengubah koordinat lokasi saat ini."
+        )
 
         # Slider Kedalaman Terikat Key
         val_depth = st.slider(
@@ -797,14 +842,31 @@ with tab_simulasi:
             st.error("⚠️ Parameter di luar rentang validasi model (-15.0° s.d. 7.0° Lintang, 94.0° s.d. 142.0° Bujur, 0 s.d. 800 km Kedalaman). Silakan sesuaikan.")
 
         # Peta Folium Interaktif (OpenStreetMap + 2 Radius Spasial Episenter: 50 km & 150 km)
-        st.markdown("**Peta Episenter & Radius Referensi Spasial (50 km & 150 km):**")
-        st.caption("💡 *Klik pada peta untuk memindahkan titik episenter secara langsung.*")
-        
+        col_m_title, col_m_zoom = st.columns([6, 4])
+        with col_m_title:
+            st.markdown("**Peta Episenter & Radius Referensi Spasial (50 km & 150 km):**")
+        with col_m_zoom:
+            if st.session_state.get("map_scroll_zoom", False):
+                def lock_map_zoom():
+                    st.session_state["map_scroll_zoom"] = False
+                st.button("🔒 Kunci Zoom Peta", on_click=lock_map_zoom, use_container_width=True, help="Kunci scroll zoom agar halaman web dapat digulir bebas tanpa terhalang peta.")
+            else:
+                def unlock_map_zoom():
+                    st.session_state["map_scroll_zoom"] = True
+                st.button("🔓 Aktifkan Zoom Peta", on_click=unlock_map_zoom, use_container_width=True, help="Aktifkan zoom scroll roda mouse pada peta.")
+
+        if st.session_state.get("map_scroll_zoom", False):
+            st.info("🔓 **Mode Zoom Scroll Aktif:** Roda mouse dapat memperbesar/memperkecil peta. Klik tombol **'🔒 Kunci Zoom Peta'** di atas agar kursor kembali dapat menggulir halaman web.")
+        else:
+            st.caption("💡 *Scroll-zoom dikunci secara bawaan agar tidak mengganggu scroll halaman. Klik peta atau tombol **'🔓 Aktifkan Zoom Peta'** untuk mengaktifkannya.*")
+
+        is_zoom_enabled = st.session_state.get("map_scroll_zoom", False)
         m = folium.Map(
             location=[val_lat, val_lon],
             zoom_start=6 if is_valid_indo else 4,
             tiles="https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-            attr="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
+            attr="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
+            scrollWheelZoom=is_zoom_enabled
         )
         
         # Radius 1: Jarak Spasial Dekat (50 km)
@@ -841,13 +903,18 @@ with tab_simulasi:
         
         map_output = st_folium(m, height=280, use_container_width=True, key="main_sim_map")
         if map_output and map_output.get("last_clicked"):
+            # Jika pengguna mengklik peta, aktifkan mode zoom juga secara intuitif
+            if not st.session_state.get("map_scroll_zoom", False):
+                st.session_state["map_scroll_zoom"] = True
+
             click_lat = round(float(map_output["last_clicked"]["lat"]), 3)
             click_lon = round(float(map_output["last_clicked"]["lng"]), 3)
             if -15.0 <= click_lat <= 7.0 and 94.0 <= click_lon <= 142.0:
-                if (round(float(st.session_state.get("input_lat", 0)), 3) != click_lat or 
-                    round(float(st.session_state.get("input_lon", 0)), 3) != click_lon):
-                    st.session_state["input_lat"] = click_lat
-                    st.session_state["input_lon"] = click_lon
+                cur_lat = round(float(st.session_state.get("input_lat", 0)), 3)
+                cur_lon = round(float(st.session_state.get("input_lon", 0)), 3)
+                if cur_lat != click_lat or cur_lon != click_lon:
+                    st.session_state["pending_lat"] = click_lat
+                    st.session_state["pending_lon"] = click_lon
                     st.session_state["historical_actual"] = None
                     st.rerun()
 
