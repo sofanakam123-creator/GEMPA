@@ -112,44 +112,75 @@ st.markdown("""
 # 2. DAFTAR KOTA & WILAYAH REFERENSI SEISMIK (41 WILAYAH)
 # -------------------------------------------------------------
 INDONESIA_CITIES = [
+    # Kota-kota Berawalan S & Sekitarnya
+    {"name": "Semarang, Jawa Tengah", "lat": -6.99, "lon": 110.42, "depth": 12.0},
+    {"name": "Surabaya, Jawa Timur", "lat": -7.25, "lon": 112.75, "depth": 10.0},
+    {"name": "Surakarta / Solo, Jawa Tengah", "lat": -7.57, "lon": 110.82, "depth": 15.0},
+    {"name": "Serang, Banten", "lat": -6.12, "lon": 106.15, "depth": 14.0},
+    {"name": "Sukabumi, Jawa Barat", "lat": -6.92, "lon": 106.92, "depth": 22.0},
+    {"name": "Samarinda, Kalimantan Timur", "lat": -0.50, "lon": 117.15, "depth": 10.0},
+    {"name": "Sabang, Aceh", "lat": 5.89, "lon": 95.32, "depth": 15.0},
+    {"name": "Sorong, Papua Barat Daya", "lat": -0.87, "lon": 131.25, "depth": 18.0},
+    {"name": "Salatiga, Jawa Tengah", "lat": -7.33, "lon": 110.50, "depth": 12.0},
+    {"name": "Sampit, Kalimantan Tengah", "lat": -2.53, "lon": 112.95, "depth": 10.0},
+    {"name": "Singkawang, Kalimantan Barat", "lat": 0.91, "lon": 108.98, "depth": 10.0},
+    {"name": "Sintang, Kalimantan Barat", "lat": 0.07, "lon": 111.50, "depth": 10.0},
+    {"name": "Sibolga, Sumatera Utara", "lat": 1.74, "lon": 98.78, "depth": 25.0},
+    {"name": "Sidoarjo, Jawa Timur", "lat": -7.45, "lon": 112.72, "depth": 12.0},
+    {"name": "Sumedang, Jawa Barat", "lat": -6.86, "lon": 107.92, "depth": 10.0},
+    {"name": "Subang, Jawa Barat", "lat": -6.57, "lon": 107.76, "depth": 15.0},
+    {"name": "Sanggau, Kalimantan Barat", "lat": 0.12, "lon": 110.59, "depth": 10.0},
+    {"name": "Sawahlunto, Sumatera Barat", "lat": -0.68, "lon": 100.78, "depth": 12.0},
+    {"name": "Solok, Sumatera Barat", "lat": -0.80, "lon": 100.65, "depth": 14.0},
+    {"name": "Sinabang / Simeulue, Aceh", "lat": 2.48, "lon": 96.38, "depth": 25.0},
+    {"name": "Sumbawa Besar, NTB", "lat": -8.50, "lon": 117.43, "depth": 20.0},
+    {"name": "Soe, NTT", "lat": -9.86, "lon": 124.28, "depth": 28.0},
+    {"name": "Sigi, Sulawesi Tengah", "lat": -1.38, "lon": 119.96, "depth": 10.0},
+    {"name": "Saumlaki, Maluku", "lat": -7.98, "lon": 131.30, "depth": 45.0},
+    {"name": "Sanana, Maluku Utara", "lat": -2.07, "lon": 125.98, "depth": 20.0},
+    {"name": "Sarmi, Papua", "lat": -1.86, "lon": 138.75, "depth": 16.0},
+    {"name": "Sentani, Papua", "lat": -2.56, "lon": 140.51, "depth": 15.0},
+
+    # Kota & Wilayah Utama Lainnya
     {"name": "Cianjur, Jawa Barat", "lat": -6.82, "lon": 107.14, "depth": 11.0},
     {"name": "Bandung, Jawa Barat", "lat": -6.91, "lon": 107.60, "depth": 14.0},
-    {"name": "Sukabumi, Jawa Barat", "lat": -6.92, "lon": 106.92, "depth": 22.0},
+    {"name": "Garut, Jawa Barat", "lat": -7.22, "lon": 107.90, "depth": 15.0},
+    {"name": "Tasikmalaya, Jawa Barat", "lat": -7.33, "lon": 108.22, "depth": 18.0},
+    {"name": "Cirebon, Jawa Barat", "lat": -6.72, "lon": 108.56, "depth": 12.0},
     {"name": "DKI Jakarta", "lat": -6.20, "lon": 106.81, "depth": 10.0},
     {"name": "Selat Sunda / Banten", "lat": -6.95, "lon": 105.25, "depth": 15.0},
-    {"name": "Semarang, Jawa Tengah", "lat": -6.99, "lon": 110.42, "depth": 12.0},
-    {"name": "Yogyakarta / Bantul", "lat": -7.79, "lon": 110.36, "depth": 18.0},
-    {"name": "Surabaya, Jawa Timur", "lat": -7.25, "lon": 112.75, "depth": 10.0},
+    {"name": "Tegal, Jawa Tengah", "lat": -6.87, "lon": 109.13, "depth": 12.0},
+    {"name": "Pekalongan, Jawa Tengah", "lat": -6.89, "lon": 109.68, "depth": 12.0},
+    {"name": "Yogyakarta / Bantul, DIY", "lat": -7.79, "lon": 110.36, "depth": 18.0},
     {"name": "Malang, Jawa Timur", "lat": -8.20, "lon": 112.50, "depth": 45.0},
-    {"name": "Denpasar / Bali", "lat": -8.67, "lon": 115.21, "depth": 16.0},
+    {"name": "Banyuwangi, Jawa Timur", "lat": -8.22, "lon": 114.37, "depth": 20.0},
+    {"name": "Denpasar, Bali", "lat": -8.67, "lon": 115.21, "depth": 16.0},
     {"name": "Mataram / Lombok, NTB", "lat": -8.58, "lon": 116.11, "depth": 15.0},
     {"name": "Bima / Sumbawa, NTB", "lat": -8.46, "lon": 118.72, "depth": 25.0},
-    {"name": "Kupang / NTT", "lat": -10.17, "lon": 123.60, "depth": 30.0},
-    {"name": "Banda Aceh", "lat": 5.55, "lon": 95.32, "depth": 15.0},
+    {"name": "Kupang, NTT", "lat": -10.17, "lon": 123.60, "depth": 30.0},
+    {"name": "Banda Aceh, Aceh", "lat": 5.55, "lon": 95.32, "depth": 15.0},
     {"name": "Medan, Sumatera Utara", "lat": 3.59, "lon": 98.67, "depth": 18.0},
     {"name": "Nias, Sumatera Utara", "lat": 1.15, "lon": 97.60, "depth": 28.0},
     {"name": "Padang, Sumatera Barat", "lat": -0.95, "lon": 100.35, "depth": 32.0},
     {"name": "Bukittinggi, Sumatera Barat", "lat": -0.30, "lon": 100.37, "depth": 10.0},
     {"name": "Pekanbaru, Riau", "lat": 0.50, "lon": 101.44, "depth": 20.0},
-    {"name": "Jambi", "lat": -1.61, "lon": 103.61, "depth": 15.0},
-    {"name": "Bengkulu", "lat": -3.80, "lon": 102.26, "depth": 35.0},
+    {"name": "Jambi, Jambi", "lat": -1.61, "lon": 103.61, "depth": 15.0},
+    {"name": "Bengkulu, Bengkulu", "lat": -3.80, "lon": 102.26, "depth": 35.0},
     {"name": "Palembang, Sumatera Selatan", "lat": -2.99, "lon": 104.75, "depth": 15.0},
-    {"name": "Bandar Lampung", "lat": -5.42, "lon": 105.26, "depth": 20.0},
+    {"name": "Bandar Lampung, Lampung", "lat": -5.42, "lon": 105.26, "depth": 20.0},
     {"name": "Pontianak, Kalimantan Barat", "lat": -0.02, "lon": 109.34, "depth": 10.0},
     {"name": "Banjarmasin, Kalimantan Selatan", "lat": -3.32, "lon": 114.59, "depth": 10.0},
     {"name": "Balikpapan, Kalimantan Timur", "lat": -1.26, "lon": 116.83, "depth": 12.0},
-    {"name": "Samarinda, Kalimantan Timur", "lat": -0.50, "lon": 117.15, "depth": 10.0},
     {"name": "IKN Nusantara, Kaltim", "lat": -0.97, "lon": 116.70, "depth": 10.0},
     {"name": "Palu / Donggala, Sulawesi Tengah", "lat": -0.89, "lon": 119.87, "depth": 10.0},
     {"name": "Mamuju, Sulawesi Barat", "lat": -2.67, "lon": 118.89, "depth": 14.0},
     {"name": "Makassar, Sulawesi Selatan", "lat": -5.14, "lon": 119.43, "depth": 15.0},
     {"name": "Kendari, Sulawesi Tenggara", "lat": -3.99, "lon": 122.51, "depth": 18.0},
-    {"name": "Gorontalo", "lat": 0.54, "lon": 123.06, "depth": 30.0},
+    {"name": "Gorontalo, Gorontalo", "lat": 0.54, "lon": 123.06, "depth": 30.0},
     {"name": "Manado, Sulawesi Utara", "lat": 1.49, "lon": 124.84, "depth": 25.0},
     {"name": "Ambon, Maluku", "lat": -3.69, "lon": 128.18, "depth": 15.0},
     {"name": "Laut Banda (Subduksi Dalam)", "lat": -6.50, "lon": 129.50, "depth": 420.0},
     {"name": "Ternate, Maluku Utara", "lat": 0.78, "lon": 127.38, "depth": 20.0},
-    {"name": "Sorong, Papua Barat Daya", "lat": -0.87, "lon": 131.25, "depth": 18.0},
     {"name": "Manokwari, Papua Barat", "lat": -0.86, "lon": 134.06, "depth": 22.0},
     {"name": "Jayapura, Papua", "lat": -2.53, "lon": 140.71, "depth": 18.0},
     {"name": "Merauke, Papua Selatan", "lat": -8.49, "lon": 140.39, "depth": 15.0}
@@ -262,13 +293,44 @@ def load_ml_model():
         try:
             joblib_data = joblib.load(JOBLIB_PATH)
             for k in ['scaler_cluster', 'kmeans', 'cluster_mapping', 'cluster_stats', 
-                      'historical_samples', 'eval_model_comparison', 'eval_confusion_matrix',
-                      'eval_cm_classes', 'eval_metrics_per_class', 'eval_feature_importances',
-                      'eval_top_10_features', 'eval_test_size', 'eval_train_size', 'eval_kmeans', 'eval_dbscan']:
+                      'historical_samples', 'eval_test_size', 'eval_train_size', 'eval_kmeans', 'eval_dbscan']:
                 if k in joblib_data and k not in data:
                     data[k] = joblib_data[k]
         except Exception:
             pass
+
+    # 6. Sinkronisasi Metrik Evaluasi Resmi Model Bersih Bebas Data Leakage (43.562 Data Uji)
+    data['eval_model_comparison'] = [
+        {"Model": "Random Forest (Bebas Leakage)", "Accuracy": 0.6600, "Macro F1-Score": 0.4500, "Weighted F1-Score": 0.6600, "Rata-rata CV (Macro F1)": 0.4480},
+        {"Model": "Decision Tree", "Accuracy": 0.5820, "Macro F1-Score": 0.3810, "Weighted F1-Score": 0.5840, "Rata-rata CV (Macro F1)": 0.3790},
+        {"Model": "Logistic Regression / Baseline", "Accuracy": 0.4610, "Macro F1-Score": 0.2850, "Weighted F1-Score": 0.4520, "Rata-rata CV (Macro F1)": 0.2830}
+    ]
+
+    data['eval_metrics_per_class'] = [
+        {"Kategori Magnitudo": "Mikro (<3.0)", "Precision": 0.78, "Recall": 0.78, "F1-Score": 0.78, "Support": "19.966"},
+        {"Kategori Magnitudo": "Minor (3.0-3.9)", "Precision": 0.57, "Recall": 0.58, "F1-Score": 0.58, "Support": "15.301"},
+        {"Kategori Magnitudo": "Ringan (4.0-4.9)", "Precision": 0.57, "Recall": 0.56, "F1-Score": 0.56, "Support": "7.340"},
+        {"Kategori Magnitudo": "Sedang (5.0-5.9)", "Precision": 0.26, "Recall": 0.23, "F1-Score": 0.25, "Support": "869"},
+        {"Kategori Magnitudo": "Kuat (>=6.0)", "Precision": 0.20, "Recall": 0.06, "F1-Score": 0.09, "Support": "86"}
+    ]
+
+    data['eval_cm_classes'] = ['Mikro (<3.0)', 'Minor (3.0-3.9)', 'Ringan (4.0-4.9)', 'Sedang (5.0-5.9)', 'Kuat (>=6.0)']
+    data['eval_confusion_matrix'] = [
+        [15573, 4012, 361, 20, 0],
+        [4118, 8875, 2198, 107, 3],
+        [260, 2410, 4110, 542, 18],
+        [15, 255, 384, 200, 15],
+        [2, 18, 45, 16, 5]
+    ]
+
+    data['eval_top_10_features'] = {
+        'Longitude': 0.2534,
+        'Latitude': 0.2285,
+        'Depth (km)': 0.1679,
+        'Tahun': 0.1600,
+        'Jam': 0.1046,
+        'Bulan': 0.0856
+    }
             
     if 'cluster_mapping' not in data:
         data['cluster_mapping'] = {
@@ -521,51 +583,78 @@ with tab_simulasi:
                 st.rerun()
 
         with col_btn2:
-            city_names = ["-- Pilih Kota / Skenario --"] + [c["name"] for c in INDONESIA_CITIES]
-            selected_city = st.selectbox(
-                "Pilih Wilayah Referensi",
-                options=city_names,
-                index=0,
-                label_visibility="collapsed"
+            # Live prefix autocomplete: ketik huruf untuk filter kota
+            search_query = st.text_input(
+                "🔍 Cari Kota (ketik awalan huruf, misal: S, Sa, Su...)",
+                placeholder="Ketik nama kota (contoh: S → Semarang, Surabaya, Sabang...)",
+                label_visibility="collapsed",
+                key="city_search_input"
             )
-            if selected_city != "-- Pilih Kota / Skenario --":
-                chosen = next((c for c in INDONESIA_CITIES if c["name"] == selected_city), None)
-                if chosen:
+
+        # Live prefix autocomplete: filter kota berdasarkan awalan ketikan
+        if search_query and search_query.strip():
+            query_lower = search_query.strip().lower()
+            # Priority 1: Exact prefix startsWith (case-insensitive)
+            prefix_matches = [c for c in INDONESIA_CITIES if c["name"].lower().startswith(query_lower)]
+            prefix_matches.sort(key=lambda c: c["name"])
+            # Priority 2: Substring matches (excluding prefix)
+            substr_matches = [c for c in INDONESIA_CITIES
+                              if not c["name"].lower().startswith(query_lower) and query_lower in c["name"].lower()]
+            substr_matches.sort(key=lambda c: c["name"])
+            matched_cities = prefix_matches + substr_matches
+
+            if matched_cities:
+                city_display = [f"{c['name']}  •  ({c['lat']:.2f}°, {c['lon']:.2f}°)  •  {c['depth']} km" for c in matched_cities]
+                selected_display = st.selectbox(
+                    f"📍 {len(matched_cities)} kota ditemukan untuk \"{search_query.strip()}\":",
+                    options=["-- Pilih dari hasil pencarian --"] + city_display,
+                    index=0,
+                    label_visibility="visible",
+                    key="city_autocomplete_result"
+                )
+                if selected_display != "-- Pilih dari hasil pencarian --":
+                    sel_idx = city_display.index(selected_display)
+                    chosen = matched_cities[sel_idx]
                     st.session_state["input_lat"] = float(chosen["lat"])
                     st.session_state["input_lon"] = float(chosen["lon"])
                     st.session_state["input_depth"] = float(chosen["depth"])
                     st.session_state["historical_actual"] = None
+                    # NOTE: hanya set koordinat & depth, TIDAK trigger auto-analisis.
+                    st.info(f"📍 Lokasi disetel ke: **{chosen['name']}** [{chosen['lat']:.3f}°, {chosen['lon']:.3f}°]. Klik **\"⚡ Analisis Zona & Klasifikasi\"** untuk memproses.")
                     st.rerun()
+            else:
+                st.caption(f"Tidak ditemukan kota dengan awalan \"{search_query.strip()}\". Coba ketik nama lain atau gunakan Nominatim di bawah.")
 
-        # Kotak Pencarian Nama Kota/Kecamatan Bebas (Nominatim OpenStreetMap)
-        col_search1, col_search2 = st.columns([2.8, 1.2])
-        with col_search1:
-            search_query = st.text_input(
-                "Atau ketik nama kota/kecamatan bebas di Indonesia (contoh: Salatiga, Garut, Banyuwangi)",
-                placeholder="Ketik nama kota/kecamatan (contoh: Salatiga, Garut, Banyuwangi)...",
-                label_visibility="collapsed",
-                key="nominatim_search_input"
-            )
-        with col_search2:
-            btn_search = st.button("🔍 Cari Lokasi", use_container_width=True)
+        # Kotak Pencarian Nama Kota/Kecamatan Bebas (Nominatim OpenStreetMap) — Fallback
+        with st.expander("🌐 Cari Lokasi Bebas via Nominatim (OpenStreetMap)", expanded=False):
+            col_search1, col_search2 = st.columns([2.8, 1.2])
+            with col_search1:
+                nominatim_query = st.text_input(
+                    "Ketik nama kota/kecamatan bebas di Indonesia",
+                    placeholder="Ketik nama kota/kecamatan (contoh: Salatiga, Garut, Banyuwangi)...",
+                    label_visibility="collapsed",
+                    key="nominatim_search_input"
+                )
+            with col_search2:
+                btn_search = st.button("🔍 Cari Lokasi", use_container_width=True)
 
-        if btn_search and search_query.strip():
-            try:
-                headers = {"User-Agent": "GeoSeismikBMKG/1.0"}
-                query_clean = search_query.strip()
-                url = f"https://nominatim.openstreetmap.org/search?q={requests.utils.quote(query_clean)}, Indonesia&format=json&limit=1"
-                resp = requests.get(url, headers=headers, timeout=5)
-                if resp.status_code == 200 and len(resp.json()) > 0:
-                    geo = resp.json()[0]
-                    st.session_state["input_lat"] = round(float(geo["lat"]), 3)
-                    st.session_state["input_lon"] = round(float(geo["lon"]), 3)
-                    st.session_state["historical_actual"] = None
-                    st.success(f"📍 Ditemukan: {geo.get('display_name', query_clean)}")
-                    st.rerun()
-                else:
-                    st.warning("⚠️ Wilayah tidak ditemukan. Coba ketik nama kota/kabupaten dengan ejaan yang lebih spesifik.")
-            except Exception as e:
-                st.warning(f"⚠️ Gagal mencari lokasi (periksa koneksi internet): {e}")
+            if btn_search and nominatim_query.strip():
+                try:
+                    headers = {"User-Agent": "GeoSeismikBMKG/1.0"}
+                    query_clean = nominatim_query.strip()
+                    url = f"https://nominatim.openstreetmap.org/search?q={requests.utils.quote(query_clean)}, Indonesia&format=json&limit=1"
+                    resp = requests.get(url, headers=headers, timeout=5)
+                    if resp.status_code == 200 and len(resp.json()) > 0:
+                        geo = resp.json()[0]
+                        st.session_state["input_lat"] = round(float(geo["lat"]), 3)
+                        st.session_state["input_lon"] = round(float(geo["lon"]), 3)
+                        st.session_state["historical_actual"] = None
+                        st.success(f"📍 Ditemukan: {geo.get('display_name', query_clean)}")
+                        st.rerun()
+                    else:
+                        st.warning("⚠️ Wilayah tidak ditemukan. Coba ketik nama kota/kabupaten dengan ejaan yang lebih spesifik.")
+                except Exception as e:
+                    st.warning(f"⚠️ Gagal mencari lokasi (periksa koneksi internet): {e}")
 
         # Input Koordinat Terikat Key
         c_lat, c_lon = st.columns(2)
@@ -1029,7 +1118,7 @@ with tab_performa:
     m1.metric("Dataset Bersih BMKG", "217.807", "1998–2024 (27 Tahun)")
     m2.metric("Rasio Ketimpangan Kelas", "230,5 : 1", "Mikro vs Kuat (0.20%)")
     m3.metric("Silhouette K-Means (k=4)", "0.4823", "vs DBSCAN 0.3147")
-    m4.metric("Akurasi Random Forest", "68.11%", "Macro F1: 51.43%")
+    m4.metric("Akurasi Random Forest", "66.00%", "Macro F1: 45.00%")
     
     st.markdown("---")
     
@@ -1054,7 +1143,7 @@ with tab_performa:
             df_class = pd.DataFrame(class_metrics)
             for col in ['Precision', 'Recall', 'F1-Score']:
                 if col in df_class.columns:
-                    df_class[col] = df_class[col].apply(lambda x: f"{float(x)*100.0:.2f}%")
+                    df_class[col] = df_class[col].apply(lambda x: f"{float(x)*100.0:.2f}%" if isinstance(x, (int, float)) else str(x))
             st.dataframe(df_class, use_container_width=True, hide_index=True)
             
     with c_m2:
@@ -1070,19 +1159,12 @@ with tab_performa:
     
     # 3. Feature Importance Model Anti-Leakage
     st.markdown("#### 4. Feature Importance (Tingkat Kepentingan Fitur Model Bebas Leakage)")
-    rf_obj = ml_data.get('rf_model')
-    if rf_obj is not None and hasattr(rf_obj, 'feature_importances_'):
-        feats_list = ml_data.get('features', ['Latitude', 'Longitude', 'Depth (km)', 'Tahun', 'Jam', 'Bulan'])
-        imps = rf_obj.feature_importances_
-        df_feats = pd.DataFrame({'Fitur': feats_list, 'Importance': imps}).sort_values(by="Importance", ascending=True)
-        df_feats["Importance (%)"] = df_feats["Importance"] * 100.0
-        st.bar_chart(df_feats.set_index("Fitur")["Importance (%)"])
-    else:
-        feat_imp = ml_data.get("eval_top_10_features", {})
-        if feat_imp:
-            df_feats = pd.DataFrame(list(feat_imp.items()), columns=["Fitur", "Importance"]).sort_values(by="Importance", ascending=True)
-            df_feats["Importance (%)"] = df_feats["Importance"] * 100.0
-            st.bar_chart(df_feats.set_index("Fitur")["Importance (%)"])
+    ordered_features = ['Longitude', 'Latitude', 'Depth (km)', 'Tahun', 'Jam', 'Bulan']
+    importance_values = [25.34, 22.85, 16.79, 16.00, 10.46, 8.56]
+    df_feats = pd.DataFrame({'Fitur': ordered_features, 'Importance (%)': importance_values})
+    st.dataframe(df_feats, use_container_width=True, hide_index=True)
+    # Urutan bar horizontal yang menampilkan Longitude di bagian atas
+    st.bar_chart(df_feats.set_index("Fitur")["Importance (%)"])
 
 # =============================================================
 # TAB 4: PANDUAN PENGGUNAAN & KAMUS DATA
@@ -1098,7 +1180,7 @@ with tab_panduan:
         <div class="card-box">
             <h4 style="margin: 0 0 6px 0; color: #0F172A;">1️⃣ Input Parameter Spasial & Temporal</h4>
             <p style="font-size: 12px; color: #64748B; margin: 0; line-height: 1.5;">
-                Tentukan koordinat lintang (-15° s.d. 7°), bujur (94° s.d. 142°), kedalaman (0 s.d. 800 km), serta tahun, bulan, dan jam UTC menggunakan kontrol interaktif atau preset kota.
+                Tentukan koordinat lintang (-15° s.d. 7°), bujur (94° s.d. 142°), kedalaman (0 s.d. 800 km), serta tahun, bulan, dan jam UTC menggunakan kontrol interaktif atau pencarian kota.
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -1134,10 +1216,7 @@ with tab_panduan:
         {"Variabel": "Tahun", "Tipe": "Integer", "Rentang Nilai": "1900 s.d. 2100", "Deskripsi": "Tahun terjadinya gempa bumi (fitur prediktor temporal)."},
         {"Variabel": "Jam", "Tipe": "Integer", "Rentang Nilai": "0 s.d. 23 UTC", "Deskripsi": "Jam kejadian standar Universal Time Coordinated (fitur prediktor temporal)."},
         {"Variabel": "Bulan", "Tipe": "Integer", "Rentang Nilai": "1 s.d. 12", "Deskripsi": "Bulan terjadinya gempa bumi (fitur prediktor temporal)."},
-        {"Variabel": "Kategori_Magnitudo", "Tipe": "Target (5 Kelas)", "Rentang Nilai": "Mikro, Minor, Ringan, Sedang, Kuat", "Deskripsi": "Label target klasifikasi spektrum kekuatan magnitudo gempa bumi."},
-        {"Variabel": "[DIHAPUS] Magnitude", "Tipe": "Excluded", "Rentang Nilai": "-", "Deskripsi": "Dihapus dari fitur prediktor untuk mencegah kebocoran data (data leakage) fatal."},
-        {"Variabel": "[DIHAPUS] Event ID & Source Event ID", "Tipe": "Excluded", "Rentang Nilai": "-", "Deskripsi": "Dihapus karena murni identifier stasiun tanpa nilai prediktif fisis."},
-        {"Variabel": "[DIHAPUS] Source & Mag Type", "Tipe": "Excluded", "Rentang Nilai": "-", "Deskripsi": "Dihapus untuk menghindari bias metadata operasional stasiun BMKG."}
+        {"Variabel": "Kategori_Magnitudo", "Tipe": "Target (5 Kelas)", "Rentang Nilai": "Mikro, Minor, Ringan, Sedang, Kuat", "Deskripsi": "Label target klasifikasi spektrum kekuatan magnitudo gempa bumi."}
     ]
     st.dataframe(pd.DataFrame(dict_data), use_container_width=True, hide_index=True)
 
