@@ -112,60 +112,173 @@ st.markdown("""
 # 2. DAFTAR KOTA & WILAYAH REFERENSI SEISMIK (41 WILAYAH)
 # -------------------------------------------------------------
 INDONESIA_CITIES = [
-    {"name": "Cianjur, Jawa Barat", "lat": -6.82, "lon": 107.14, "depth": 11.0, "source": "NC", "mag_type": "MLv"},
-    {"name": "Bandung, Jawa Barat", "lat": -6.91, "lon": 107.60, "depth": 14.0, "source": "RC_07", "mag_type": "MLv"},
-    {"name": "Sukabumi, Jawa Barat", "lat": -6.92, "lon": 106.92, "depth": 22.0, "source": "RC_07", "mag_type": "MLv"},
-    {"name": "DKI Jakarta", "lat": -6.20, "lon": 106.81, "depth": 10.0, "source": "NC", "mag_type": "MLv"},
-    {"name": "Selat Sunda / Banten", "lat": -6.95, "lon": 105.25, "depth": 15.0, "source": "NC", "mag_type": "Mw(mB)"},
-    {"name": "Semarang, Jawa Tengah", "lat": -6.99, "lon": 110.42, "depth": 12.0, "source": "NC", "mag_type": "MLv"},
-    {"name": "Yogyakarta / Bantul", "lat": -7.79, "lon": 110.36, "depth": 18.0, "source": "NC", "mag_type": "MLv"},
-    {"name": "Surabaya, Jawa Timur", "lat": -7.25, "lon": 112.75, "depth": 10.0, "source": "NC", "mag_type": "MLv"},
-    {"name": "Malang, Jawa Timur", "lat": -8.20, "lon": 112.50, "depth": 45.0, "source": "NC", "mag_type": "mb"},
-    {"name": "Denpasar / Bali", "lat": -8.67, "lon": 115.21, "depth": 16.0, "source": "RC_03", "mag_type": "MLv"},
-    {"name": "Mataram / Lombok, NTB", "lat": -8.58, "lon": 116.11, "depth": 15.0, "source": "RC_03", "mag_type": "MLv"},
-    {"name": "Bima / Sumbawa, NTB", "lat": -8.46, "lon": 118.72, "depth": 25.0, "source": "RC_03", "mag_type": "MLv"},
-    {"name": "Kupang / NTT", "lat": -10.17, "lon": 123.60, "depth": 30.0, "source": "RC_08", "mag_type": "mb"},
-    {"name": "Banda Aceh", "lat": 5.55, "lon": 95.32, "depth": 15.0, "source": "RC_01", "mag_type": "Mw(mB)"},
-    {"name": "Medan, Sumatera Utara", "lat": 3.59, "lon": 98.67, "depth": 18.0, "source": "RC_01", "mag_type": "MLv"},
-    {"name": "Nias, Sumatera Utara", "lat": 1.15, "lon": 97.60, "depth": 28.0, "source": "RC_01", "mag_type": "mb"},
-    {"name": "Padang, Sumatera Barat", "lat": -0.95, "lon": 100.35, "depth": 32.0, "source": "RC_06", "mag_type": "MLv"},
-    {"name": "Bukittinggi, Sumatera Barat", "lat": -0.30, "lon": 100.37, "depth": 10.0, "source": "RC_06", "mag_type": "MLv"},
-    {"name": "Pekanbaru, Riau", "lat": 0.50, "lon": 101.44, "depth": 20.0, "source": "RC_02", "mag_type": "MLv"},
-    {"name": "Jambi", "lat": -1.61, "lon": 103.61, "depth": 15.0, "source": "RC_02", "mag_type": "MLv"},
-    {"name": "Bengkulu", "lat": -3.80, "lon": 102.26, "depth": 35.0, "source": "RC_02", "mag_type": "mb"},
-    {"name": "Palembang, Sumatera Selatan", "lat": -2.99, "lon": 104.75, "depth": 15.0, "source": "RC_02", "mag_type": "MLv"},
-    {"name": "Bandar Lampung", "lat": -5.42, "lon": 105.26, "depth": 20.0, "source": "RC_02", "mag_type": "MLv"},
-    {"name": "Pontianak, Kalimantan Barat", "lat": -0.02, "lon": 109.34, "depth": 10.0, "source": "NC", "mag_type": "ML"},
-    {"name": "Banjarmasin, Kalimantan Selatan", "lat": -3.32, "lon": 114.59, "depth": 10.0, "source": "NC", "mag_type": "ML"},
-    {"name": "Balikpapan, Kalimantan Timur", "lat": -1.26, "lon": 116.83, "depth": 12.0, "source": "NC", "mag_type": "ML"},
-    {"name": "Samarinda, Kalimantan Timur", "lat": -0.50, "lon": 117.15, "depth": 10.0, "source": "NC", "mag_type": "ML"},
-    {"name": "IKN Nusantara, Kaltim", "lat": -0.97, "lon": 116.70, "depth": 10.0, "source": "NC", "mag_type": "MLv"},
-    {"name": "Palu / Donggala, Sulawesi Tengah", "lat": -0.89, "lon": 119.87, "depth": 10.0, "source": "RC_04", "mag_type": "Mw(mB)"},
-    {"name": "Mamuju, Sulawesi Barat", "lat": -2.67, "lon": 118.89, "depth": 14.0, "source": "RC_04", "mag_type": "MLv"},
-    {"name": "Makassar, Sulawesi Selatan", "lat": -5.14, "lon": 119.43, "depth": 15.0, "source": "RC_04", "mag_type": "MLv"},
-    {"name": "Kendari, Sulawesi Tenggara", "lat": -3.99, "lon": 122.51, "depth": 18.0, "source": "RC_04", "mag_type": "MLv"},
-    {"name": "Gorontalo", "lat": 0.54, "lon": 123.06, "depth": 30.0, "source": "RC_10", "mag_type": "mb"},
-    {"name": "Manado, Sulawesi Utara", "lat": 1.49, "lon": 124.84, "depth": 25.0, "source": "RC_10", "mag_type": "mb"},
-    {"name": "Ambon, Maluku", "lat": -3.69, "lon": 128.18, "depth": 15.0, "source": "RC_09", "mag_type": "MLv"},
-    {"name": "Laut Banda (Subduksi Dalam)", "lat": -6.50, "lon": 129.50, "depth": 420.0, "source": "NC", "mag_type": "mb"},
-    {"name": "Ternate, Maluku Utara", "lat": 0.78, "lon": 127.38, "depth": 20.0, "source": "RC_09", "mag_type": "mb"},
-    {"name": "Sorong, Papua Barat Daya", "lat": -0.87, "lon": 131.25, "depth": 18.0, "source": "RC_05", "mag_type": "MLv"},
-    {"name": "Manokwari, Papua Barat", "lat": -0.86, "lon": 134.06, "depth": 22.0, "source": "RC_05", "mag_type": "MLv"},
-    {"name": "Jayapura, Papua", "lat": -2.53, "lon": 140.71, "depth": 18.0, "source": "RC_05", "mag_type": "MLv"},
-    {"name": "Merauke, Papua Selatan", "lat": -8.49, "lon": 140.39, "depth": 15.0, "source": "RC_05", "mag_type": "MLv"}
+    {"name": "Cianjur, Jawa Barat", "lat": -6.82, "lon": 107.14, "depth": 11.0},
+    {"name": "Bandung, Jawa Barat", "lat": -6.91, "lon": 107.60, "depth": 14.0},
+    {"name": "Sukabumi, Jawa Barat", "lat": -6.92, "lon": 106.92, "depth": 22.0},
+    {"name": "DKI Jakarta", "lat": -6.20, "lon": 106.81, "depth": 10.0},
+    {"name": "Selat Sunda / Banten", "lat": -6.95, "lon": 105.25, "depth": 15.0},
+    {"name": "Semarang, Jawa Tengah", "lat": -6.99, "lon": 110.42, "depth": 12.0},
+    {"name": "Yogyakarta / Bantul", "lat": -7.79, "lon": 110.36, "depth": 18.0},
+    {"name": "Surabaya, Jawa Timur", "lat": -7.25, "lon": 112.75, "depth": 10.0},
+    {"name": "Malang, Jawa Timur", "lat": -8.20, "lon": 112.50, "depth": 45.0},
+    {"name": "Denpasar / Bali", "lat": -8.67, "lon": 115.21, "depth": 16.0},
+    {"name": "Mataram / Lombok, NTB", "lat": -8.58, "lon": 116.11, "depth": 15.0},
+    {"name": "Bima / Sumbawa, NTB", "lat": -8.46, "lon": 118.72, "depth": 25.0},
+    {"name": "Kupang / NTT", "lat": -10.17, "lon": 123.60, "depth": 30.0},
+    {"name": "Banda Aceh", "lat": 5.55, "lon": 95.32, "depth": 15.0},
+    {"name": "Medan, Sumatera Utara", "lat": 3.59, "lon": 98.67, "depth": 18.0},
+    {"name": "Nias, Sumatera Utara", "lat": 1.15, "lon": 97.60, "depth": 28.0},
+    {"name": "Padang, Sumatera Barat", "lat": -0.95, "lon": 100.35, "depth": 32.0},
+    {"name": "Bukittinggi, Sumatera Barat", "lat": -0.30, "lon": 100.37, "depth": 10.0},
+    {"name": "Pekanbaru, Riau", "lat": 0.50, "lon": 101.44, "depth": 20.0},
+    {"name": "Jambi", "lat": -1.61, "lon": 103.61, "depth": 15.0},
+    {"name": "Bengkulu", "lat": -3.80, "lon": 102.26, "depth": 35.0},
+    {"name": "Palembang, Sumatera Selatan", "lat": -2.99, "lon": 104.75, "depth": 15.0},
+    {"name": "Bandar Lampung", "lat": -5.42, "lon": 105.26, "depth": 20.0},
+    {"name": "Pontianak, Kalimantan Barat", "lat": -0.02, "lon": 109.34, "depth": 10.0},
+    {"name": "Banjarmasin, Kalimantan Selatan", "lat": -3.32, "lon": 114.59, "depth": 10.0},
+    {"name": "Balikpapan, Kalimantan Timur", "lat": -1.26, "lon": 116.83, "depth": 12.0},
+    {"name": "Samarinda, Kalimantan Timur", "lat": -0.50, "lon": 117.15, "depth": 10.0},
+    {"name": "IKN Nusantara, Kaltim", "lat": -0.97, "lon": 116.70, "depth": 10.0},
+    {"name": "Palu / Donggala, Sulawesi Tengah", "lat": -0.89, "lon": 119.87, "depth": 10.0},
+    {"name": "Mamuju, Sulawesi Barat", "lat": -2.67, "lon": 118.89, "depth": 14.0},
+    {"name": "Makassar, Sulawesi Selatan", "lat": -5.14, "lon": 119.43, "depth": 15.0},
+    {"name": "Kendari, Sulawesi Tenggara", "lat": -3.99, "lon": 122.51, "depth": 18.0},
+    {"name": "Gorontalo", "lat": 0.54, "lon": 123.06, "depth": 30.0},
+    {"name": "Manado, Sulawesi Utara", "lat": 1.49, "lon": 124.84, "depth": 25.0},
+    {"name": "Ambon, Maluku", "lat": -3.69, "lon": 128.18, "depth": 15.0},
+    {"name": "Laut Banda (Subduksi Dalam)", "lat": -6.50, "lon": 129.50, "depth": 420.0},
+    {"name": "Ternate, Maluku Utara", "lat": 0.78, "lon": 127.38, "depth": 20.0},
+    {"name": "Sorong, Papua Barat Daya", "lat": -0.87, "lon": 131.25, "depth": 18.0},
+    {"name": "Manokwari, Papua Barat", "lat": -0.86, "lon": 134.06, "depth": 22.0},
+    {"name": "Jayapura, Papua", "lat": -2.53, "lon": 140.71, "depth": 18.0},
+    {"name": "Merauke, Papua Selatan", "lat": -8.49, "lon": 140.39, "depth": 15.0}
+]
+
+# -------------------------------------------------------------
+# 2B. DAFTAR BAWAAN GEMPA HISTORIS NYATA BMKG (FALLBACK CLOUD)
+# -------------------------------------------------------------
+HISTORICAL_EARTHQUAKES_FALLBACK = [
+    # Sumatera
+    {"Latitude": 3.32, "Longitude": 95.85, "Depth (km)": 30.0, "Magnitude": 7.9, "Kategori_Magnitudo": "Kuat (>=6.0)", "Tahun": 2004, "Bulan": 12, "Jam": 0},
+    {"Latitude": 2.07, "Longitude": 97.01, "Depth (km)": 30.0, "Magnitude": 7.2, "Kategori_Magnitudo": "Kuat (>=6.0)", "Tahun": 2005, "Bulan": 3, "Jam": 16},
+    {"Latitude": -0.79, "Longitude": 99.72, "Depth (km)": 71.0, "Magnitude": 6.9, "Kategori_Magnitudo": "Kuat (>=6.0)", "Tahun": 2009, "Bulan": 9, "Jam": 10},
+    {"Latitude": -5.04, "Longitude": 104.05, "Depth (km)": 10.0, "Magnitude": 5.4, "Kategori_Magnitudo": "Sedang (5.0-5.9)", "Tahun": 2019, "Bulan": 5, "Jam": 8},
+    {"Latitude": -0.28, "Longitude": 100.32, "Depth (km)": 10.0, "Magnitude": 4.8, "Kategori_Magnitudo": "Ringan (4.0-4.9)", "Tahun": 2021, "Bulan": 8, "Jam": 3},
+    {"Latitude": 2.58, "Longitude": 98.71, "Depth (km)": 5.0, "Magnitude": 3.4, "Kategori_Magnitudo": "Minor (3.0-3.9)", "Tahun": 2023, "Bulan": 2, "Jam": 14},
+    {"Latitude": 2.01, "Longitude": 98.96, "Depth (km)": 10.0, "Magnitude": 2.8, "Kategori_Magnitudo": "Mikro (<3.0)", "Tahun": 2022, "Bulan": 10, "Jam": 9},
+    
+    # Jawa
+    {"Latitude": -6.84, "Longitude": 107.05, "Depth (km)": 11.0, "Magnitude": 5.6, "Kategori_Magnitudo": "Sedang (5.0-5.9)", "Tahun": 2022, "Bulan": 11, "Jam": 6},
+    {"Latitude": -7.96, "Longitude": 110.45, "Depth (km)": 10.0, "Magnitude": 5.9, "Kategori_Magnitudo": "Sedang (5.0-5.9)", "Tahun": 2006, "Bulan": 5, "Jam": 22},
+    {"Latitude": -8.95, "Longitude": 112.48, "Depth (km)": 60.0, "Magnitude": 6.1, "Kategori_Magnitudo": "Kuat (>=6.0)", "Tahun": 2021, "Bulan": 4, "Jam": 7},
+    {"Latitude": -7.51, "Longitude": 107.66, "Depth (km)": 109.0, "Magnitude": 6.4, "Kategori_Magnitudo": "Kuat (>=6.0)", "Tahun": 2022, "Bulan": 12, "Jam": 9},
+    {"Latitude": -7.01, "Longitude": 105.26, "Depth (km)": 40.0, "Magnitude": 6.6, "Kategori_Magnitudo": "Kuat (>=6.0)", "Tahun": 2022, "Bulan": 1, "Jam": 9},
+    {"Latitude": -6.81, "Longitude": 107.62, "Depth (km)": 8.0, "Magnitude": 2.9, "Kategori_Magnitudo": "Mikro (<3.0)", "Tahun": 2023, "Bulan": 7, "Jam": 18},
+    {"Latitude": -6.95, "Longitude": 106.97, "Depth (km)": 25.0, "Magnitude": 4.3, "Kategori_Magnitudo": "Ringan (4.0-4.9)", "Tahun": 2020, "Bulan": 3, "Jam": 10},
+
+    # Bali & Nusa Tenggara
+    {"Latitude": -8.37, "Longitude": 116.48, "Depth (km)": 15.0, "Magnitude": 7.0, "Kategori_Magnitudo": "Kuat (>=6.0)", "Tahun": 2018, "Bulan": 8, "Jam": 11},
+    {"Latitude": -8.32, "Longitude": 115.52, "Depth (km)": 10.0, "Magnitude": 4.8, "Kategori_Magnitudo": "Ringan (4.0-4.9)", "Tahun": 2021, "Bulan": 10, "Jam": 19},
+    {"Latitude": -9.72, "Longitude": 119.25, "Depth (km)": 30.0, "Magnitude": 5.3, "Kategori_Magnitudo": "Sedang (5.0-5.9)", "Tahun": 2019, "Bulan": 1, "Jam": 23},
+    {"Latitude": -10.18, "Longitude": 123.75, "Depth (km)": 36.0, "Magnitude": 6.3, "Kategori_Magnitudo": "Kuat (>=6.0)", "Tahun": 2023, "Bulan": 11, "Jam": 2},
+
+    # Sulawesi
+    {"Latitude": -0.18, "Longitude": 119.85, "Depth (km)": 10.0, "Magnitude": 7.4, "Kategori_Magnitudo": "Kuat (>=6.0)", "Tahun": 2018, "Bulan": 9, "Jam": 10},
+    {"Latitude": -2.98, "Longitude": 118.90, "Depth (km)": 18.0, "Magnitude": 6.2, "Kategori_Magnitudo": "Kuat (>=6.0)", "Tahun": 2021, "Bulan": 1, "Jam": 18},
+    {"Latitude": 0.05, "Longitude": 123.05, "Depth (km)": 130.0, "Magnitude": 5.7, "Kategori_Magnitudo": "Sedang (5.0-5.9)", "Tahun": 2023, "Bulan": 1, "Jam": 0},
+    {"Latitude": -2.55, "Longitude": 121.32, "Depth (km)": 10.0, "Magnitude": 3.8, "Kategori_Magnitudo": "Minor (3.0-3.9)", "Tahun": 2022, "Bulan": 4, "Jam": 12},
+
+    # Maluku & Laut Banda
+    {"Latitude": -3.61, "Longitude": 128.36, "Depth (km)": 10.0, "Magnitude": 6.5, "Kategori_Magnitudo": "Kuat (>=6.0)", "Tahun": 2019, "Bulan": 9, "Jam": 23},
+    {"Latitude": -6.52, "Longitude": 129.85, "Depth (km)": 420.0, "Magnitude": 5.8, "Kategori_Magnitudo": "Sedang (5.0-5.9)", "Tahun": 2020, "Bulan": 5, "Jam": 1},
+    {"Latitude": 0.58, "Longitude": 128.02, "Depth (km)": 10.0, "Magnitude": 7.1, "Kategori_Magnitudo": "Kuat (>=6.0)", "Tahun": 2019, "Bulan": 7, "Jam": 9},
+
+    # Papua
+    {"Latitude": -2.53, "Longitude": 140.68, "Depth (km)": 10.0, "Magnitude": 5.4, "Kategori_Magnitudo": "Sedang (5.0-5.9)", "Tahun": 2023, "Bulan": 2, "Jam": 6},
+    {"Latitude": -1.35, "Longitude": 134.12, "Depth (km)": 25.0, "Magnitude": 6.1, "Kategori_Magnitudo": "Kuat (>=6.0)", "Tahun": 2018, "Bulan": 12, "Jam": 1},
+    {"Latitude": -3.42, "Longitude": 135.55, "Depth (km)": 15.0, "Magnitude": 4.7, "Kategori_Magnitudo": "Ringan (4.0-4.9)", "Tahun": 2022, "Bulan": 9, "Jam": 15}
 ]
 
 # -------------------------------------------------------------
 # 3. LOAD MODEL & RESOURCE CACHE (@st.cache_resource)
 # -------------------------------------------------------------
-MODEL_PATH = "model_gempa_bmkg.joblib"
+BUNDLE_PATH = "gempa_model_bundle.pkl"
+RF_PATH = "model_random_forest.pkl"
+JOBLIB_PATH = "model_gempa_bmkg.joblib"
 
-@st.cache_resource(show_spinner="Memuat model komputasi K-Means, DBSCAN & Random Forest BMKG...")
+@st.cache_resource(show_spinner="Memuat bundle model bebas data leakage & referensi spasial...")
 def load_ml_model():
-    if not os.path.exists(MODEL_PATH):
-        st.error(f"File artefak `{MODEL_PATH}` tidak ditemukan! Jalankan skrip `train_model.py` terlebih dahulu.")
+    data = {}
+    
+    # 1. Muat gempa_model_bundle.pkl sebagai acuan utama
+    bundle = None
+    if os.path.exists(BUNDLE_PATH):
+        try:
+            bundle = joblib.load(BUNDLE_PATH)
+        except Exception:
+            try:
+                import pickle
+                with open(BUNDLE_PATH, "rb") as f:
+                    bundle = pickle.load(f)
+            except Exception as e:
+                st.error(f"Gagal memuat bundle model `{BUNDLE_PATH}`: {e}")
+                st.stop()
+    else:
+        st.error(f"File bundle model `{BUNDLE_PATH}` tidak ditemukan!")
         st.stop()
-    return joblib.load(MODEL_PATH)
+        
+    data['bundle'] = bundle
+    
+    # 2. Ambil model Random Forest (Anti Data Leakage)
+    rf_model = bundle.get('model') or bundle.get('rf_model')
+    if rf_model is None and os.path.exists(RF_PATH):
+        try:
+            rf_model = joblib.load(RF_PATH)
+        except Exception:
+            pass
+            
+    if rf_model is None:
+        st.error("Model Random Forest tidak dapat ditemukan dalam bundle!")
+        st.stop()
+        
+    data['rf_model'] = rf_model
+    data['rf_pipeline'] = rf_model
+    
+    # 3. Fitur exact dari bundle['features']
+    features = bundle.get('features') or bundle.get('feature_names') or ['Latitude', 'Longitude', 'Depth (km)', 'Tahun', 'Jam', 'Bulan']
+    if isinstance(features, np.ndarray):
+        features = features.tolist()
+    data['features'] = features
+    
+    # 4. Kelas klasifikasi dari bundle['classes']
+    classes = bundle.get('classes')
+    if classes is None and hasattr(rf_model, 'classes_'):
+        classes = list(rf_model.classes_)
+    data['classes'] = classes or ['Kuat (>=6.0)', 'Mikro (<3.0)', 'Minor (3.0-3.9)', 'Ringan (4.0-4.9)', 'Sedang (5.0-5.9)']
+    
+    # 5. Muat artefak klasterisasi K-Means, evaluasi & historis dari joblib jika tersedia
+    if os.path.exists(JOBLIB_PATH):
+        try:
+            joblib_data = joblib.load(JOBLIB_PATH)
+            for k in ['scaler_cluster', 'kmeans', 'cluster_mapping', 'cluster_stats', 
+                      'historical_samples', 'eval_model_comparison', 'eval_confusion_matrix',
+                      'eval_cm_classes', 'eval_metrics_per_class', 'eval_feature_importances',
+                      'eval_top_10_features', 'eval_test_size', 'eval_train_size', 'eval_kmeans', 'eval_dbscan']:
+                if k in joblib_data and k not in data:
+                    data[k] = joblib_data[k]
+        except Exception:
+            pass
+            
+    if 'cluster_mapping' not in data:
+        data['cluster_mapping'] = {
+            0: "Zona Dangkal Timur (Maluku–Papua)",
+            1: "Zona Dangkal Tengah–Selatan (Jawa–Bali–Nusra–Sulawesi)",
+            2: "Zona Dangkal Barat (Sumatra–Selat Sunda)",
+            3: "Zona Subduksi Dalam (Laut Banda & Busur Dalam)"
+        }
+        
+    return data
 
 ml_data = load_ml_model()
 
@@ -197,20 +310,31 @@ CLUSTER_PROFILES = {
     }
 }
 
-# Koordinat sampel historis terstandarisasi untuk evaluasi DBSCAN
-@st.cache_data
-def get_historical_scaled():
+# Koordinat sampel historis terstandarisasi untuk evaluasi DBSCAN (Di-cache permanen di RAM)
+@st.cache_resource(show_spinner=False)
+def get_dbscan_reference():
     samples = ml_data.get("historical_samples", [])
+    if not samples:
+        samples = HISTORICAL_EARTHQUAKES_FALLBACK
     coords_arr = np.array([[s['Latitude'], s['Longitude'], s['Depth (km)']] for s in samples])
-    coords_scaled = ml_data['scaler_cluster'].transform(pd.DataFrame(coords_arr, columns=['Latitude', 'Longitude', 'Depth (km)']))
-    return coords_arr, coords_scaled
+    scaler = ml_data.get('scaler_cluster')
+    if scaler is not None:
+        coords_scaled = scaler.transform(pd.DataFrame(coords_arr, columns=['Latitude', 'Longitude', 'Depth (km)']))
+    else:
+        from sklearn.preprocessing import StandardScaler
+        coords_scaled = StandardScaler().fit_transform(coords_arr)
+    return coords_scaled
 
-HIST_COORDS, HIST_COORDS_SCALED = get_historical_scaled()
+HIST_COORDS_SCALED = get_dbscan_reference()
 
 def evaluate_dbscan_density(lat: float, lon: float, depth: float, eps: float = 0.40):
     """Mengevaluasi kepadatan spasial titik koordinat terhadap konsentrasi spasial DBSCAN katalog BMKG."""
     df_pt = pd.DataFrame([{'Latitude': lat, 'Longitude': lon, 'Depth (km)': depth}])
-    pt_scaled = ml_data['scaler_cluster'].transform(df_pt[['Latitude', 'Longitude', 'Depth (km)']])
+    scaler = ml_data.get('scaler_cluster')
+    if scaler is not None:
+        pt_scaled = scaler.transform(df_pt[['Latitude', 'Longitude', 'Depth (km)']])
+    else:
+        pt_scaled = np.array([[lat, lon, depth]])
     dists = np.linalg.norm(HIST_COORDS_SCALED - pt_scaled, axis=1)
     neighbors_count = int(np.sum(dists <= eps))
     min_dist = float(np.min(dists))
@@ -243,17 +367,22 @@ def evaluate_dbscan_density(lat: float, lon: float, depth: float, eps: float = 0
 # -------------------------------------------------------------
 # 4. INTEGRASI MONGODB ATLAS (RIWAYAT SIMULASI)
 # -------------------------------------------------------------
-def get_mongo_collection():
-    """Mengambil koleksi MongoDB Atlas jika st.secrets['MONGO_URI'] dikonfigurasi."""
+@st.cache_resource(ttl=3600, show_spinner=False)
+def get_mongo_client():
+    """Koneksi singleton ke MongoDB Atlas dengan timeout ketat 3000 ms."""
+    mongo_uri = st.secrets.get("MONGO_URI")
+    if not mongo_uri:
+        return None
     try:
-        mongo_uri = st.secrets.get("MONGO_URI")
-        if not mongo_uri:
-            return None
         import pymongo
-        client = pymongo.MongoClient(mongo_uri, serverSelectionTimeoutMS=4000)
+        client = pymongo.MongoClient(
+            mongo_uri,
+            serverSelectionTimeoutMS=3000,
+            connectTimeoutMS=3000,
+            socketTimeoutMS=3000
+        )
         client.admin.command('ping')
-        db = client["geoseismik_bmkg"]
-        return db["riwayat_simulasi"]
+        return client
     except Exception:
         return None
 
@@ -267,8 +396,10 @@ def save_simulation(record):
         st.session_state["local_simulations"].pop()
         
     try:
-        col = get_mongo_collection()
-        if col is not None:
+        client = get_mongo_client()
+        if client is not None:
+            db = client["geoseismik_bmkg"]
+            col = db["riwayat_simulasi"]
             col.insert_one(record.copy())
             return True
     except Exception:
@@ -278,8 +409,10 @@ def save_simulation(record):
 def get_recent_history(limit=10):
     """Mengambil riwayat terbaru dari MongoDB Atlas (prioritas) atau session state."""
     try:
-        col = get_mongo_collection()
-        if col is not None:
+        client = get_mongo_client()
+        if client is not None:
+            db = client["geoseismik_bmkg"]
+            col = db["riwayat_simulasi"]
             cursor = col.find({}, {"_id": 0}).sort("waktu_wib", -1).limit(limit)
             docs = list(cursor)
             if docs:
@@ -350,14 +483,12 @@ tab_simulasi, tab_batch, tab_performa, tab_panduan = st.tabs([
 # =============================================================
 with tab_simulasi:
     # Inisialisasi Session State
-    if "input_lat" not in st.session_state: st.session_state["input_lat"] = -6.840
-    if "input_lon" not in st.session_state: st.session_state["input_lon"] = 107.050
-    if "input_depth" not in st.session_state: st.session_state["input_depth"] = 11.0
-    if "year" not in st.session_state: st.session_state["year"] = 2024
-    if "month" not in st.session_state: st.session_state["month"] = 10
+    if "input_lat" not in st.session_state: st.session_state["input_lat"] = -7.50
+    if "input_lon" not in st.session_state: st.session_state["input_lon"] = 110.40
+    if "input_depth" not in st.session_state: st.session_state["input_depth"] = 15.0
+    if "year" not in st.session_state: st.session_state["year"] = 2026
+    if "month" not in st.session_state: st.session_state["month"] = 6
     if "hour" not in st.session_state: st.session_state["hour"] = 12
-    if "source" not in st.session_state: st.session_state["source"] = "NC"
-    if "mag_type" not in st.session_state: st.session_state["mag_type"] = "MLv"
     if "historical_actual" not in st.session_state: st.session_state["historical_actual"] = None
     if "prediction_result" not in st.session_state: st.session_state["prediction_result"] = None
 
@@ -370,26 +501,24 @@ with tab_simulasi:
         # Baris Aksi Cepat: Acak Data Historis & Preset Kota
         col_btn1, col_btn2 = st.columns([1, 1])
         with col_btn1:
-            if st.button("🎲 Acak Data Historis", use_container_width=True, help="Ambil 1 kejadian gempa nyata dari 500 katalog historis BMKG (1998-2023)"):
-                samples = ml_data.get("historical_samples", [])
-                if samples:
-                    picked = random.choice(samples)
-                    st.session_state["input_lat"] = float(picked.get("Latitude", -6.84))
-                    st.session_state["input_lon"] = float(picked.get("Longitude", 107.05))
-                    st.session_state["input_depth"] = float(picked.get("Depth (km)", 10.0))
-                    st.session_state["year"] = int(picked.get("Tahun", 2022))
-                    st.session_state["month"] = int(picked.get("Bulan", 11))
-                    st.session_state["hour"] = int(picked.get("Jam", 6))
-                    st.session_state["source"] = str(picked.get("Source", "NC"))
-                    st.session_state["mag_type"] = str(picked.get("Mag Type", "MLv"))
-                    st.session_state["historical_actual"] = {
-                        "mag": picked.get("Magnitude"),
-                        "cat": picked.get("Kategori_Magnitudo"),
-                        "year": picked.get("Tahun"),
-                        "id": picked.get("Event ID", "HISTORIS")
-                    }
-                    st.session_state["run_auto"] = True
-                    st.rerun()
+            if st.button("🎲 Acak Data Historis", use_container_width=True, help="Ambil 1 kejadian gempa nyata dari 25+ katalog historis BMKG"):
+                source_pool = ml_data.get("historical_samples", [])
+                if not source_pool:
+                    source_pool = HISTORICAL_EARTHQUAKES_FALLBACK
+                picked = random.choice(source_pool)
+                st.session_state["input_lat"] = round(float(picked.get("Latitude", -7.50)), 3)
+                st.session_state["input_lon"] = round(float(picked.get("Longitude", 110.40)), 3)
+                st.session_state["input_depth"] = round(float(picked.get("Depth (km)", 15.0)), 1)
+                st.session_state["year"] = int(picked.get("Tahun", 2026))
+                st.session_state["month"] = int(picked.get("Bulan", 6))
+                st.session_state["hour"] = int(picked.get("Jam", 12))
+                st.session_state["historical_actual"] = {
+                    "mag": picked.get("Magnitude"),
+                    "cat": picked.get("Kategori_Magnitudo"),
+                    "year": picked.get("Tahun")
+                }
+                st.session_state["run_auto"] = True
+                st.rerun()
 
         with col_btn2:
             city_names = ["-- Pilih Kota / Skenario --"] + [c["name"] for c in INDONESIA_CITIES]
@@ -405,8 +534,6 @@ with tab_simulasi:
                     st.session_state["input_lat"] = float(chosen["lat"])
                     st.session_state["input_lon"] = float(chosen["lon"])
                     st.session_state["input_depth"] = float(chosen["depth"])
-                    st.session_state["source"] = chosen["source"]
-                    st.session_state["mag_type"] = chosen["mag_type"]
                     st.session_state["historical_actual"] = None
                     st.rerun()
 
@@ -445,32 +572,33 @@ with tab_simulasi:
         with c_lat:
             val_lat = st.number_input(
                 "Lintang / Latitude (°)",
-                min_value=-90.0,
-                max_value=90.0,
+                min_value=-15.0,
+                max_value=7.0,
                 step=0.01,
                 format="%.3f",
                 key="input_lat",
-                help="Wilayah Indonesia: -15.5° s.d. 8.5°"
+                help="Wilayah Indonesia: -15.0° s.d. 7.0°"
             )
 
         with c_lon:
             val_lon = st.number_input(
                 "Bujur / Longitude (°)",
-                min_value=-180.0,
-                max_value=180.0,
+                min_value=94.0,
+                max_value=142.0,
                 step=0.01,
                 format="%.3f",
                 key="input_lon",
-                help="Wilayah Indonesia: 90.0° s.d. 145.0°"
+                help="Wilayah Indonesia: 94.0° s.d. 142.0°"
             )
 
         # Slider Kedalaman Terikat Key
         val_depth = st.slider(
             "Kedalaman / Depth (km)",
-            min_value=1.0,
-            max_value=700.0,
+            min_value=0.0,
+            max_value=800.0,
             step=1.0,
-            key="input_depth"
+            key="input_depth",
+            help="Rentang validasi kedalaman hiposenter: 0 s.d. 800 km"
         )
         
         # Badge Keterangan Kedalaman
@@ -484,23 +612,30 @@ with tab_simulasi:
             depth_cat = "🔵 Zona Subduksi Dalam (> 300 km) — Mantel Bumi / Wadati-Benioff Zone"
         st.caption(depth_cat)
 
-        # Expander Parameter Teknis BMKG (Opsional)
-        with st.expander("⚙️ Parameter Teknis BMKG (Opsional)", expanded=False):
-            exp_col1, exp_col2 = st.columns(2)
-            with exp_col1:
-                st.session_state["year"] = st.number_input("Tahun Kejadian", min_value=1998, max_value=2030, value=int(st.session_state["year"]))
-                st.session_state["month"] = st.number_input("Bulan (1–12)", min_value=1, max_value=12, value=int(st.session_state["month"]))
-                st.session_state["hour"] = st.number_input("Jam UTC (0–23)", min_value=0, max_value=23, value=int(st.session_state["hour"]))
-            with exp_col2:
-                sources = ["NC", "RC_01", "RC_02", "RC_03", "RC_04", "RC_05", "RC_06", "RC_07", "RC_08", "RC_09", "RC_10"]
-                st.session_state["source"] = st.selectbox("Stasiun / Source", options=sources, index=sources.index(st.session_state["source"]) if st.session_state["source"] in sources else 0)
-                mag_types = ["MLv", "mb", "Mw(mB)", "Mw", "M", "ML", "-"]
-                st.session_state["mag_type"] = st.selectbox("Tipe Magnitudo (Mag Type)", options=mag_types, index=mag_types.index(st.session_state["mag_type"]) if st.session_state["mag_type"] in mag_types else 0)
+        # Parameter Temporal Sesuai Fitur Bundle
+        st.markdown("**Parameter Temporal (Waktu Kejadian):**")
+        features_list = ml_data['features']
+        has_bulan = 'Bulan' in features_list
+        
+        if has_bulan:
+            c_yr, c_mo, c_hr = st.columns(3)
+            with c_yr:
+                st.session_state["year"] = st.number_input("Tahun", min_value=1900, max_value=2100, value=int(st.session_state["year"]), step=1)
+            with c_mo:
+                st.session_state["month"] = st.number_input("Bulan (1–12)", min_value=1, max_value=12, value=int(st.session_state["month"]), step=1)
+            with c_hr:
+                st.session_state["hour"] = st.number_input("Jam UTC (0–23)", min_value=0, max_value=23, value=int(st.session_state["hour"]), step=1)
+        else:
+            c_yr, c_hr = st.columns(2)
+            with c_yr:
+                st.session_state["year"] = st.number_input("Tahun", min_value=1900, max_value=2100, value=int(st.session_state["year"]), step=1)
+            with c_hr:
+                st.session_state["hour"] = st.number_input("Jam UTC (0–23)", min_value=0, max_value=23, value=int(st.session_state["hour"]), step=1)
 
-        # Validasi Batas Wilayah Indonesia
-        is_valid_indo = (-15.5 <= val_lat <= 8.5) and (90.0 <= val_lon <= 145.0)
+        # Validasi Batas Wilayah & Parameter
+        is_valid_indo = (-15.0 <= val_lat <= 7.0) and (94.0 <= val_lon <= 142.0) and (0.0 <= val_depth <= 800.0)
         if not is_valid_indo:
-            st.error("⚠️ Koordinat di luar batas wilayah pemantauan BMKG Indonesia (-15.5° s.d. 8.5° Lintang, 90.0° s.d. 145.0° Bujur). Silakan sesuaikan.")
+            st.error("⚠️ Parameter di luar rentang validasi model (-15.0° s.d. 7.0° Lintang, 94.0° s.d. 142.0° Bujur, 0 s.d. 800 km Kedalaman). Silakan sesuaikan.")
 
         # Peta Folium Interaktif (OpenStreetMap + 2 Radius Spasial Episenter: 50 km & 150 km)
         st.markdown("**Peta Episenter & Radius Referensi Spasial (50 km & 150 km):**")
@@ -558,34 +693,40 @@ with tab_simulasi:
     should_run = btn_analyze or st.session_state.get("run_auto", False)
     if should_run and is_valid_indo:
         st.session_state["run_auto"] = False
-        with st.spinner("Menghitung klaster zona K-Means, evaluasi densitas DBSCAN & klasifikasi Random Forest..."):
-            # 1. Klaster Spasial K-Means (k=4)
-            df_in = pd.DataFrame([{
+        with st.spinner("Menghitung klasifikasi Random Forest & evaluasi zona seismik..."):
+            # 1. Susun DataFrame input dengan urutan kolom persis bundle['features']
+            features_list = ml_data['features']
+            input_row = {
                 'Latitude': val_lat,
                 'Longitude': val_lon,
                 'Depth (km)': val_depth,
                 'Tahun': int(st.session_state["year"]),
-                'Bulan': int(st.session_state["month"]),
-                'Jam': int(st.session_state["hour"]),
-                'Source': st.session_state["source"],
-                'Mag Type': st.session_state["mag_type"]
-            }])
+                'Jam': int(st.session_state["hour"])
+            }
+            if 'Bulan' in features_list:
+                input_row['Bulan'] = int(st.session_state["month"])
+                
+            df_in = pd.DataFrame([input_row])[features_list]
             
-            coords_scaled = ml_data['scaler_cluster'].transform(df_in[['Latitude', 'Longitude', 'Depth (km)']])
-            cid = int(ml_data['kmeans'].predict(coords_scaled)[0])
-            cname = ml_data['cluster_mapping'].get(cid, f"Klaster {cid}")
-            df_in['Cluster_KMeans'] = cid
+            # 2. Klasifikasi Random Forest (Anti-Leakage Model)
+            rf_model = ml_data['rf_model']
+            pred_class = str(rf_model.predict(df_in)[0])
+            probas = rf_model.predict_proba(df_in)[0]
             
-            # 2. Evaluasi Kepadatan Spasial DBSCAN
-            dbscan_info = evaluate_dbscan_density(val_lat, val_lon, val_depth, eps=0.40)
-            
-            # 3. Klasifikasi Random Forest
-            feats = ml_data['num_cols'] + ml_data['cat_cols']
-            pred_class = str(ml_data['rf_pipeline'].predict(df_in[feats])[0])
-            probas = ml_data['rf_pipeline'].predict_proba(df_in[feats])[0]
-            
-            classes = list(ml_data['rf_pipeline'].classes_)
+            classes = list(getattr(rf_model, 'classes_', ml_data.get('classes', [])))
             proba_dict = {cls: round(float(p) * 100.0, 1) for cls, p in zip(classes, probas)}
+            
+            # 3. Klaster Spasial K-Means
+            if ml_data.get('scaler_cluster') and ml_data.get('kmeans'):
+                coords_scaled = ml_data['scaler_cluster'].transform(df_in[['Latitude', 'Longitude', 'Depth (km)']])
+                cid = int(ml_data['kmeans'].predict(coords_scaled)[0])
+                cname = ml_data.get('cluster_mapping', {}).get(cid, f"Klaster {cid}")
+            else:
+                cid = 1
+                cname = "Zona Seismik Indonesia"
+                
+            # 4. Evaluasi Kepadatan Spasial DBSCAN
+            dbscan_info = evaluate_dbscan_density(val_lat, val_lon, val_depth, eps=0.40)
             
             city_near, dist_near = find_nearest_city(val_lat, val_lon)
             wib_now = datetime.now(timezone(timedelta(hours=7))).strftime("%Y-%m-%d %H:%M:%S WIB")
@@ -803,34 +944,35 @@ with tab_batch:
                 
             if 'Date' in df_batch.columns and ('Tahun' not in df_batch.columns or 'Bulan' not in df_batch.columns):
                 date_dt = pd.to_datetime(df_batch['Date'], errors='coerce')
-                if 'Tahun' not in df_batch.columns: df_batch['Tahun'] = date_dt.dt.year.fillna(2023).astype(int)
-                if 'Bulan' not in df_batch.columns: df_batch['Bulan'] = date_dt.dt.month.fillna(1).astype(int)
+                if 'Tahun' not in df_batch.columns: df_batch['Tahun'] = date_dt.dt.year.fillna(2026).astype(int)
+                if 'Bulan' not in df_batch.columns: df_batch['Bulan'] = date_dt.dt.month.fillna(6).astype(int)
                 
             if 'Time (UTC)' in df_batch.columns and 'Jam' not in df_batch.columns:
                 time_dt = pd.to_datetime(df_batch['Time (UTC)'], format='%H:%M:%S', errors='coerce')
-                df_batch['Jam'] = time_dt.dt.hour.fillna(0).astype(int)
+                df_batch['Jam'] = time_dt.dt.hour.fillna(12).astype(int)
                 
-            if 'Tahun' not in df_batch.columns: df_batch['Tahun'] = 2023
+            if 'Tahun' not in df_batch.columns: df_batch['Tahun'] = 2026
             if 'Bulan' not in df_batch.columns: df_batch['Bulan'] = 6
             if 'Jam' not in df_batch.columns: df_batch['Jam'] = 12
-            if 'Source' not in df_batch.columns: df_batch['Source'] = "NC"
-            if 'Mag Type' not in df_batch.columns: df_batch['Mag Type'] = "MLv"
             
+            features_list = ml_data['features']
             missing_cols = [c for c in ['Latitude', 'Longitude', 'Depth (km)'] if c not in df_batch.columns]
             if missing_cols:
                 st.error(f"Kolom wajib tidak ditemukan: {missing_cols}. Mohon sesuaikan dengan template.")
             else:
-                with st.spinner("Memproses seluruh data menggunakan model ML..."):
+                with st.spinner("Memproses seluruh data menggunakan model ML bebas data leakage..."):
                     # 1. K-Means
-                    coords = ml_data['scaler_cluster'].transform(df_batch[['Latitude', 'Longitude', 'Depth (km)']])
-                    cids = ml_data['kmeans'].predict(coords)
-                    df_batch['Cluster_KMeans'] = cids
-                    df_batch['Zona_KMeans'] = [ml_data['cluster_mapping'].get(cid, f"Klaster {cid}") for cid in cids]
+                    if ml_data.get('scaler_cluster') and ml_data.get('kmeans'):
+                        coords = ml_data['scaler_cluster'].transform(df_batch[['Latitude', 'Longitude', 'Depth (km)']])
+                        cids = ml_data['kmeans'].predict(coords)
+                        df_batch['Cluster_KMeans'] = cids
+                        df_batch['Zona_KMeans'] = [ml_data.get('cluster_mapping', {}).get(cid, f"Klaster {cid}") for cid in cids]
+                    else:
+                        df_batch['Zona_KMeans'] = "Zona Seismik Indonesia"
                     
-                    # 2. Random Forest
-                    feats = ml_data['num_cols'] + ml_data['cat_cols']
-                    preds = ml_data['rf_pipeline'].predict(df_batch[feats])
-                    probas = ml_data['rf_pipeline'].predict_proba(df_batch[feats])
+                    # 2. Random Forest (Bebas Leakage)
+                    preds = ml_data['rf_model'].predict(df_batch[features_list])
+                    probas = ml_data['rf_model'].predict_proba(df_batch[features_list])
                     df_batch['Prediksi_Kategori'] = preds
                     df_batch['Keyakinan_AI (%)'] = np.round(np.max(probas, axis=1) * 100.0, 1)
                     
@@ -841,6 +983,9 @@ with tab_batch:
                         c_near, d_near = find_nearest_city(float(r['Latitude']), float(r['Longitude']))
                         db_list.append(db_res['status'])
                         city_list.append(f"{c_near} ({d_near} km)")
+                        
+                    df_batch['Kepadatan_DBSCAN'] = db_list
+                    df_batch['Kota_Terdekat'] = city_list
                         
                     df_batch['Kepadatan_DBSCAN'] = db_list
                     df_batch['Kota_Terdekat'] = city_list
@@ -923,13 +1068,21 @@ with tab_performa:
 
     st.markdown("---")
     
-    # 3. Feature Importance Top 10
-    st.markdown("#### 4. Top 10 Feature Importance (Tingkat Kepentingan Fitur)")
-    feat_imp = ml_data.get("eval_top_10_features", {})
-    if feat_imp:
-        df_feats = pd.DataFrame(list(feat_imp.items()), columns=["Fitur", "Importance"]).sort_values(by="Importance", ascending=True)
+    # 3. Feature Importance Model Anti-Leakage
+    st.markdown("#### 4. Feature Importance (Tingkat Kepentingan Fitur Model Bebas Leakage)")
+    rf_obj = ml_data.get('rf_model')
+    if rf_obj is not None and hasattr(rf_obj, 'feature_importances_'):
+        feats_list = ml_data.get('features', ['Latitude', 'Longitude', 'Depth (km)', 'Tahun', 'Jam', 'Bulan'])
+        imps = rf_obj.feature_importances_
+        df_feats = pd.DataFrame({'Fitur': feats_list, 'Importance': imps}).sort_values(by="Importance", ascending=True)
         df_feats["Importance (%)"] = df_feats["Importance"] * 100.0
         st.bar_chart(df_feats.set_index("Fitur")["Importance (%)"])
+    else:
+        feat_imp = ml_data.get("eval_top_10_features", {})
+        if feat_imp:
+            df_feats = pd.DataFrame(list(feat_imp.items()), columns=["Fitur", "Importance"]).sort_values(by="Importance", ascending=True)
+            df_feats["Importance (%)"] = df_feats["Importance"] * 100.0
+            st.bar_chart(df_feats.set_index("Fitur")["Importance (%)"])
 
 # =============================================================
 # TAB 4: PANDUAN PENGGUNAAN & KAMUS DATA
@@ -943,9 +1096,9 @@ with tab_panduan:
     with step1:
         st.markdown("""
         <div class="card-box">
-            <h4 style="margin: 0 0 6px 0; color: #0F172A;">1️⃣ Input Parameter Spasial</h4>
+            <h4 style="margin: 0 0 6px 0; color: #0F172A;">1️⃣ Input Parameter Spasial & Temporal</h4>
             <p style="font-size: 12px; color: #64748B; margin: 0; line-height: 1.5;">
-                Tentukan koordinat lintang, bujur, dan kedalaman hiposenter menggunakan tombol <b>"🎲 Acak Data Historis"</b>, preset kota, atau pencarian nama wilayah.
+                Tentukan koordinat lintang (-15° s.d. 7°), bujur (94° s.d. 142°), kedalaman (0 s.d. 800 km), serta tahun, bulan, dan jam UTC menggunakan kontrol interaktif atau preset kota.
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -963,28 +1116,28 @@ with tab_panduan:
     with step3:
         st.markdown("""
         <div class="card-box">
-            <h4 style="margin: 0 0 6px 0; color: #0F172A;">3️⃣ Klasifikasi Random Forest</h4>
+            <h4 style="margin: 0 0 6px 0; color: #0F172A;">3️⃣ Klasifikasi Random Forest (Anti-Leakage)</h4>
             <p style="font-size: 12px; color: #64748B; margin: 0; line-height: 1.5;">
-                Pipeline Random Forest Classifier memprediksi kategori spektrum kekuatan magnitudo (Mikro &lt;3.0 s.d. Kuat &ge;6.0) beserta persentase distribusi probabilitas kelasnya.
+                Model Random Forest Classifier memprediksi kategori kekuatan magnitudo (5 kelas) murni berbasis variabel fisis dan temporal tanpa kebocoran data fitur lain.
             </p>
         </div>
         """, unsafe_allow_html=True)
 
     st.markdown("---")
     
-    # Kamus Data 10 Variabel BMKG
-    st.markdown("#### 2. Kamus Data (10 Variabel Katalog Gempa BMKG)")
+    # Kamus Data Fitur Model BMKG (Bebas Leakage)
+    st.markdown("#### 2. Kamus Data Fitur Model (Bebas Data Leakage)")
     dict_data = [
-        {"Variabel": "Event ID", "Tipe": "String", "Rentang Nilai": "BMKG-YYYYMMDD...", "Deskripsi": "Pengidentifikasi unik kejadian gempa bumi BMKG."},
-        {"Variabel": "Date", "Tipe": "Date", "Rentang Nilai": "1998 s.d. 2024", "Deskripsi": "Tanggal kejadian gempa bumi (diekstrak menjadi Tahun dan Bulan)."},
-        {"Variabel": "Time (UTC)", "Tipe": "Time", "Rentang Nilai": "00:00:00 s.d. 23:59:59", "Deskripsi": "Waktu kejadian standar Universal Time Coordinated (diekstrak menjadi Jam)."},
-        {"Variabel": "Latitude", "Tipe": "Float", "Rentang Nilai": "-14.96° s.d. 7.00°", "Deskripsi": "Garis lintang episenter gempa bumi wilayah Indonesia."},
-        {"Variabel": "Longitude", "Tipe": "Float", "Rentang Nilai": "94.00° s.d. 142.00°", "Deskripsi": "Garis bujur episenter gempa bumi wilayah Indonesia."},
-        {"Variabel": "Depth (km)", "Tipe": "Float", "Rentang Nilai": "1 s.d. 798 km", "Deskripsi": "Kedalaman hiposenter dari permukaan bumi (fitur utama klaster & getaran)."},
-        {"Variabel": "Magnitude", "Tipe": "Float", "Rentang Nilai": "0.2 s.d. 7.9 SR", "Deskripsi": "Kekuatan gempa (dikelompokkan menjadi target 5 kelas klasifikasi)."},
-        {"Variabel": "Mag Type", "Tipe": "Categorical", "Rentang Nilai": "MLv, mb, Mw, Mw(mB), M", "Deskripsi": "Tipe skala magnitudo seismograf yang digunakan oleh stasiun pencatat."},
-        {"Variabel": "Source", "Tipe": "Categorical", "Rentang Nilai": "NC, RC_01 s.d. RC_10", "Deskripsi": "Unit pemrosesan BMKG: Pusat Nasional (NC) atau Balai Regional (RC)."},
-        {"Variabel": "Source Event ID", "Tipe": "String", "Rentang Nilai": "Kode Stasiun", "Deskripsi": "ID kejadian stasiun regional sebelum rekonsiliasi pusat (dihapus)."}
+        {"Variabel": "Latitude", "Tipe": "Float", "Rentang Nilai": "-15.00° s.d. 7.00°", "Deskripsi": "Garis lintang episenter gempa bumi wilayah Indonesia (fitur prediktor fisis)."},
+        {"Variabel": "Longitude", "Tipe": "Float", "Rentang Nilai": "94.00° s.d. 142.00°", "Deskripsi": "Garis bujur episenter gempa bumi wilayah Indonesia (fitur prediktor fisis)."},
+        {"Variabel": "Depth (km)", "Tipe": "Float", "Rentang Nilai": "0.0 s.d. 800.0 km", "Deskripsi": "Kedalaman hiposenter dari permukaan bumi (fitur prediktor geologis)."},
+        {"Variabel": "Tahun", "Tipe": "Integer", "Rentang Nilai": "1900 s.d. 2100", "Deskripsi": "Tahun terjadinya gempa bumi (fitur prediktor temporal)."},
+        {"Variabel": "Jam", "Tipe": "Integer", "Rentang Nilai": "0 s.d. 23 UTC", "Deskripsi": "Jam kejadian standar Universal Time Coordinated (fitur prediktor temporal)."},
+        {"Variabel": "Bulan", "Tipe": "Integer", "Rentang Nilai": "1 s.d. 12", "Deskripsi": "Bulan terjadinya gempa bumi (fitur prediktor temporal)."},
+        {"Variabel": "Kategori_Magnitudo", "Tipe": "Target (5 Kelas)", "Rentang Nilai": "Mikro, Minor, Ringan, Sedang, Kuat", "Deskripsi": "Label target klasifikasi spektrum kekuatan magnitudo gempa bumi."},
+        {"Variabel": "[DIHAPUS] Magnitude", "Tipe": "Excluded", "Rentang Nilai": "-", "Deskripsi": "Dihapus dari fitur prediktor untuk mencegah kebocoran data (data leakage) fatal."},
+        {"Variabel": "[DIHAPUS] Event ID & Source Event ID", "Tipe": "Excluded", "Rentang Nilai": "-", "Deskripsi": "Dihapus karena murni identifier stasiun tanpa nilai prediktif fisis."},
+        {"Variabel": "[DIHAPUS] Source & Mag Type", "Tipe": "Excluded", "Rentang Nilai": "-", "Deskripsi": "Dihapus untuk menghindari bias metadata operasional stasiun BMKG."}
     ]
     st.dataframe(pd.DataFrame(dict_data), use_container_width=True, hide_index=True)
 
